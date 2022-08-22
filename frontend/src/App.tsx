@@ -1,7 +1,6 @@
 import "./App.css";
 
-
-
+import Connection from "./components/Connection";
 import SubmitTx from "./components/SubmitTx";
 import { TraceProps } from "./components/Trace";
 import TraceBoard from "./components/TraceBoard";
@@ -21,7 +20,8 @@ export default function App() {
   return (
     <div className="App">
       <h1>FIP</h1>
-      <SubmitTx/>
+      <Connection />
+      <SubmitTx />
       <h2>Trace Data</h2>
       <Transaction
         from="haowang.eth"
