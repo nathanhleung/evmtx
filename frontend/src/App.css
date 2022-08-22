@@ -1,3 +1,16 @@
 .App {
   text-align: left;
 }
+
+@media (min-width: 768px) {
+  .App {
+    max-width: 80%;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 992px) {
+  .App {
+    max-width: 60%;
+  }
+}
