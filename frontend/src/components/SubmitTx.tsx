@@ -7,7 +7,9 @@ export default function SubmitTx() {
     const [value, setValue] = useState("");
     const [toAddress, setToAddress] = useState("");
     const [loading, setLoading] = useState(false);
-
+    const [fromAddress, setFromAddress] = useState("0x0000000000000000000000000000000000000000");
+    const [gasPrice, setGasPrice] = useState("");
+    const [gasLimit, setGasLimit] = useState("");
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -15,8 +17,10 @@ export default function SubmitTx() {
         data.append("to", toAddress);
         data.append("value", value);
         data.append("data", transactionData);
+        data.append("from", fromAddress);
+        data.append("gasPrice", gasPrice);
+        data.append("gasLimit", gasLimit);
         axios.post("/sendTxn", data);
-
         setTimeout(() => setLoading(false), 1000);
     };
     return (
@@ -42,29 +46,28 @@ export default function SubmitTx() {
                 <br />
                 <span>GasPrice&nbsp;&nbsp;</span>
                 <input
-                    value={value}
+                    value={gasPrice}
                     placeholder="GasPrice (wei)"
-                    onChange={(e) => setValue(e.target.value)}
+                    onChange={(e) => setGasPrice(e.target.value)}
                     type="number"
                     style={{ width: "50%" }}
                 />
                 <br/>
                 <span>GasLimit&nbsp;&nbsp;</span>
                 <input
-                    value={value}
+                    value={gasLimit}
                     placeholder="GasLimit (wei)"
-                    onChange={(e) => setValue(e.target.value)}
+                    onChange={(e) => setGasLimit(e.target.value)}
                     type="number"
                     style={{ width: "50%" }}
                 />
                 <br/>
                 <span>From Address&nbsp;&nbsp;</span>
                 <input
-                    value={value}
+                    value={fromAddress}
                     placeholder="From Address"
-                    onChange={(e) => setValue(e.target.value)}
+                    onChange={(e) => setFromAddress(e.target.value)}
                     type="string"
-                    defaultValue="0x0000000000000000000000000000000000000000"
                     style={{ width: "50%" }}
                 />
                 <br/>
