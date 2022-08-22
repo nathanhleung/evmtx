@@ -5,9 +5,11 @@ import time
 import argparse
 
 
-def handle_ctrl_c():
+def handle_ctrl_c(signal, frame):
     print("Killing all processes...")
-    map(lambda p: p.kill(), processes)
+    for p in processes:
+        print("Killing " + p.args[0])
+        p.kill()
     sys.exit(0)
 
 
@@ -48,10 +50,12 @@ processes = [
     Popen([
         "anvil",
         "--fork-block-number",
-        args.blocknumber
+        str(args.block_number)
     ])
 ]
 
+
+# Block and listen for Ctrl+C
 while True:
     try:
         time.sleep(1)
