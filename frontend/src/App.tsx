@@ -1,6 +1,8 @@
 import "./App.css";
 
-import { useState } from "react";
+import axios from "axios";
+import { ethers } from "ethers";
+import React, { useState } from "react";
 import { TraceProps } from "./components/Trace";
 import TraceBoard from "./components/TraceBoard";
 import Transaction from "./components/Transaction";
@@ -17,19 +19,49 @@ const traces: TraceProps[] = [
 
 export default function App() {
   const [transactionData, setTransactionData] = useState("");
+  const [value, setValue] = useState("");
+  const [toAddress, setToAddress] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const data = new FormData();
+    data.append("to", toAddress);
+    data.append("value", value);
+    data.append("data", transactionData);
+    axios.post("/sendTxn", data);
+
+    setTimeout(() => setLoading(false), 1000);
+  };
 
   return (
     <div className="App">
       <h1>FIP</h1>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          setLoading(true);
-          setTimeout(() => setLoading(false), 1000);
-        }}
-      >
+      <form onSubmit={handleSubmit}>
         <p>Trace Ethereum transactions with Foundry</p>
+        <br />
+        <span>To Address&nbsp;&nbsp;</span>
+        <input
+          value={toAddress}
+          placeholder="To address"
+          onChange={(e) => setToAddress(e.target.value)}
+        />
+        <br />
+        <span>Value&nbsp;&nbsp;</span>
+        <input
+          value={value}
+          placeholder="Value (wei)"
+          onChange={(e) => setValue(e.target.value)}
+          type="number"
+          style={{ width: "50%" }}
+        />
+        <button
+          type="button"
+          onClick={() => setValue(ethers.utils.parseEther(value).toString())}
+        >
+          To wei
+        </button>
         <textarea
           placeholder="Transaction hex data"
           value={transactionData}
