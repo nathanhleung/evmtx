@@ -1,5 +1,9 @@
 # FIP
 
+## Getting Started
+
+- `make frontend` - compile frontend
+
 ## CLI
 
 The CLI is the main entry point to the program.
