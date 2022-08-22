@@ -1,11 +1,9 @@
 import "./App.css"
 
-function App() {
+export default function App() {
   return (
     <div className="App">
       <div>block explorer</div>
     </div>
   )
 }
-
-export default App
