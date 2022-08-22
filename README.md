@@ -2,7 +2,8 @@
 
 ## Getting Started
 
-- `make frontend` - compile frontend
+- `make frontend` - compile frontend and copy to server directory
+- `make server` - run Flask server
 
 ## CLI
 
