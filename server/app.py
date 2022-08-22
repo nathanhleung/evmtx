@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory, redirect, url_for
 from web3 import Web3
 import os
 
@@ -10,7 +10,17 @@ trace_result = {}
 
 @app.route("/")
 def index():
-    return "<p>Hello world</p>"
+    """
+    Redirects the root / route to the /app route which 
+    serves the frontend
+    """
+    return redirect(url_for('frontend_app', path='index.html'), 301)
+
+
+@app.route("/app/<path:path>", defaults={'path': 'index.html'})
+def frontend_app(path):
+    return send_from_directory('static', path)
+
 
 @app.route("/connected")
 def connected():
@@ -31,8 +41,8 @@ def sendTransaction():
     }
     hexbytes = w3.eth.send_transaction(calldata)
     response = {
-      "hexbytes": hexbytes.hex(),
-      "status": 200
+        "hexbytes": hexbytes.hex(),
+        "status": 200
     }
     return response
 
@@ -66,11 +76,12 @@ def sendDump():
         [call_args, block_n_hash, config],
     )
     response = {
-      "trace": trace_result,
-      "status": 200
+        "trace": trace_result,
+        "status": 200
     }
     return response
 
+
 @app.route("/getTrace", methods=['POST'])
 def getTrace():
-  return trace_result
+    return trace_result
