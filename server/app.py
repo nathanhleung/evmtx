@@ -25,9 +25,9 @@ def frontend_app(path):
 @app.route("/connected")
 def connected():
     if w3.isConnected():
-        return "<p>Connected</p>"
+        return "true"
     else:
-        return "<p>Not connected</p>"
+        return "false"
 
 
 @app.route("/sendTxn", methods=['POST'])

@@ -3,6 +3,13 @@ import SubmitTx from "./components/SubmitTx"
 import { TraceProps } from "./components/Trace"
 import TraceBoard from "./components/TraceBoard"
 import Transaction from "./components/Transaction"
+import "./App.css"
+
+import Connection from "./components/Connection"
+import SubmitTx from "./components/SubmitTx"
+import { TraceProps } from "./components/Trace"
+import TraceBoard from "./components/TraceBoard"
+import Transaction from "./components/Transaction"
 
 const traces: TraceProps[] = [
   {
@@ -18,6 +25,7 @@ export default function App() {
   return (
     <div className="App">
       <h1>FIP</h1>
+      <Connection />
       <SubmitTx />
       <h2>Trace Data</h2>
       <Transaction
