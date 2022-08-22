@@ -1,5 +1,4 @@
 import axios from "axios"
-import { ethers } from "ethers"
 import React, { useState } from "react"
 
 export default function SubmitTx() {

@@ -7,14 +7,14 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-
+import SubmitTx from "./pages/SubmitTx";
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 root.render(
   <React.StrictMode>
     <Router>
     <Routes>
     <Route path='/' element={<App/>}>  </Route>
-    <Route path='/test' element={<Test/>}> </Route>
+    <Route path='/submitTx' element={<SubmitTx/>}> </Route>
     </Routes>
     </Router>
   </React.StrictMode>

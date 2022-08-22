@@ -1,4 +1,4 @@
-type TransactionResultProp = {
+export type TransactionResultProp = {
     exeStatus: boolean;
     from: string;
     to: string;
