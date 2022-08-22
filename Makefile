@@ -1,7 +1,14 @@
-.PHONY: frontend server
+.PHONY: frontend server cli
 
 frontend:
-	cd frontend && npm install && npm run build && cp -r build ../server/static
+	cd frontend && \
+		npm install && \
+		npm run build && \
+		rm -rf ../server/static && \
+		cp -r build ../server/static
 
 server:
 	cd server && python -m flask run
+
+cli:
+	cd cli && python main.py

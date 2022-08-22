@@ -34,8 +34,11 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-print("Running frontend on port " + str(args.port))
-print("Forking chain from block " + str(args.block_number))
+port = args.port or 3000
+block_number = args.block_number or 1000
+
+print("Running frontend on port " + str(port))
+print("Forking chain from block " + str(block_number))
 
 processes = [
     Popen([
@@ -45,12 +48,12 @@ processes = [
         "--app",
         "../server/app",
         "run",
-        "--port=" + str(args.port),
+        "--port=" + str(port),
     ]),
     Popen([
         "anvil",
         "--fork-block-number",
-        str(args.block_number)
+        str(block_number)
     ])
 ]
 

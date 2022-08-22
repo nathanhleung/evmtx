@@ -17,7 +17,7 @@ def index():
     return redirect(url_for('frontend_app', path='index.html'), 301)
 
 
-@app.route("/app/<path:path>", defaults={'path': 'index.html'})
+@app.route("/app/<path:path>")
 def frontend_app(path):
     return send_from_directory('static', path)
 
@@ -36,8 +36,11 @@ def sendTransaction():
         "0x70997970c51812dc3a010c7d01b50e0d17dc79c8")
     calldata = {
         "to": w3.toChecksumAddress(request.form["to"]),
-        "from": w3.eth.default_account,
-        "value": request.form["value"]
+        "from": w3.toChecksumAddress(request.form["from"]),
+        "value": request.form["value"],
+        "data": request.form["data"],
+        "gasPrice": request.form["gasPrice"],
+        "gasLimit": request.form["gasLimit"],
     }
     hexbytes = w3.eth.send_transaction(calldata)
     response = {

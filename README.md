@@ -8,6 +8,7 @@ https://docs.google.com/document/d/1-w4HLSqg33S1ddFUrqK8TfzONr_gYvMFLGu2tBQc7Iw/
 
 - `make frontend` - compile frontend and copy to server directory
 - `make server` - run Flask server
+- `make cli` - run CLI
 
 ## CLI
 
