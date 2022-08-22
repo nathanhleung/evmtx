@@ -1,27 +1,24 @@
-import "./App.css";
-
-
-
-import SubmitTx from "./components/SubmitTx";
-import { TraceProps } from "./components/Trace";
-import TraceBoard from "./components/TraceBoard";
-import Transaction from "./components/Transaction";
+import "./App.css"
+import SubmitTx from "./components/SubmitTx"
+import { TraceProps } from "./components/Trace"
+import TraceBoard from "./components/TraceBoard"
+import Transaction from "./components/Transaction"
 
 const traces: TraceProps[] = [
   {
     from: "haowang.eth",
     to: "nathan.eth",
-    identation: 1,
+    identation: 1
   },
   { from: "nathan.eth", to: "haowang.eth", identation: 2 },
-  { from: "nathan.eth", to: "haowang.eth", identation: 1 },
-];
+  { from: "nathan.eth", to: "haowang.eth", identation: 1 }
+]
 
 export default function App() {
   return (
     <div className="App">
       <h1>FIP</h1>
-      <SubmitTx/>
+      <SubmitTx />
       <h2>Trace Data</h2>
       <Transaction
         from="haowang.eth"
@@ -42,5 +39,5 @@ export default function App() {
         <TraceBoard traces={traces}></TraceBoard>
       </div>
     </div>
-  );
+  )
 }
