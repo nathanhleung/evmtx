@@ -1,5 +1,11 @@
+
 import "./App.css";
 import { Link } from "react-router-dom";
+import Connection from "./components/Connection"
+import SubmitTx from "./components/SubmitTx"
+import { TraceProps } from "./components/Trace"
+import TraceBoard from "./components/TraceBoard"
+import Transaction from "./components/Transaction"
 
 export default function App() {
   return (
@@ -14,5 +20,5 @@ export default function App() {
         </tr>
       </table>
     </div>
-  );
+  )
 }
