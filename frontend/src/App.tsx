@@ -3,6 +3,7 @@ import "./App.css";
 import axios from "axios";
 import { ethers } from "ethers";
 import React, { useState } from "react";
+import SubmitTx from "./components/SubmitTx";
 import { TraceProps } from "./components/Trace";
 import TraceBoard from "./components/TraceBoard";
 import Transaction from "./components/Transaction";
@@ -91,6 +92,8 @@ export default function App() {
       <div>
         <h3> Traces </h3>
         <TraceBoard traces={traces}></TraceBoard>
+        <TraceBoard traces={traces}></TraceBoard>
+        <SubmitTx />
       </div>
     </div>
   );
