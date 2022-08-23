@@ -1,3 +1,4 @@
+from crypt import methods
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
@@ -9,8 +10,14 @@ app = Flask(__name__)
 CORS(app, resources={r"/": {"origins": "http://localhost:3000"}})
 w3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545/'))
 # w3 = Web3(Web3.HTTPProvider(os.environ['WEB3_PROVIDER']))
-trace_result = {}
 
+geth_w3 = Web3(Web3.HTTPProvider("http://142.132.152.124:8546"))
+geth_w3.middleware_onion.inject(web3.middleware.geth_poa_middleware, layer=0)
+gas_price = int(geth_w3.get_block(os.environ["BLOCK_NUM"])["baseFeePerGas"])
+
+
+
+trace_result = {}
 
 @app.route("/")
 def index():
@@ -21,6 +28,12 @@ def connected():
   response = jsonify({"result": "false"})
   if w3.isConnected():
       response = jsonify({"result": "true"})
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  return response
+
+@app.route("/gasPrirce", methods=["POST", "GET"])
+def getGasPrice():
+  response = jsonify({"gasPrice": gas_price})
   response.headers.add('Access-Control-Allow-Origin', '*')
   return response
 
@@ -55,8 +68,7 @@ def sendDump():
     # receive request
 
     # connect to geth
-    w3 = Web3(Web3.HTTPProvider("http://142.132.152.124:8546"))
-    w3.middleware_onion.inject(web3.middleware.geth_poa_middleware, layer=0)
+
     # construct call args, block num or hash, trace config, override
     # call_args = request.form["call_args"]
     # # get the parent block that we've used
