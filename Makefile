@@ -8,7 +8,7 @@ frontend:
 		cp -r build ../server/static
 
 server:
-	cd server && python -m flask run
+	cd server && python -m flask run --port 9000
 
 cli:
 	cd cli && python main.py
