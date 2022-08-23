@@ -10,10 +10,10 @@ frontend-build:
 		npm run build
 		
 server:
-	cd server && python -m flask run --port 9000
+	cd server && python3 -m flask run --port 9000
 
 cli:
-	cd cli && python main.py --rpc-url http://142.132.152.124:8546
+	cd cli && python3 main.py --rpc-url http://142.132.152.124:8546
 
 anvil:
 	cd foundry && cargo build

@@ -1,5 +1,5 @@
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
-import { Box, Button, Flex, Heading } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 import { ConnectionBadge } from "./components";
 import { Dashboard, NewTransaction, TransactionDetail } from "./pages";
 
@@ -12,17 +12,23 @@ export default function App() {
       margin="0 auto"
       paddingY={[10, 15, 20]}
     >
-      <Flex justifyContent="space-between" alignItems="center">
+      <Flex justifyContent="space-between" alignItems="center" mb={2}>
         <Flex alignItems="center">
           <Link to="/">
             <Heading>Foundry Web Tracer</Heading>
           </Link>
           <ConnectionBadge marginLeft={4} />
         </Flex>
-        <Button colorScheme="blue" onClick={() => navigate("/transaction/new")}>
-          Trace New Transaction
+        <Button
+          colorScheme="green"
+          onClick={() => navigate("/transaction/new")}
+        >
+          Trace New Transaction +
         </Button>
       </Flex>
+      <Text color="gray.500">
+        Trace Ethereum transactions on the web using Foundry
+      </Text>
 
       <Box paddingY={[10, 15, 20]}>
         <Routes>
