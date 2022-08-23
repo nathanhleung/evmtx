@@ -1,17 +1,39 @@
+import "./App.css"
+import { Link } from "react-router-dom"
+import TxOverview from "./components/TxOverview"
+import { TxOverviewProps } from "./components/TxOverview"
 
-import "./App.css";
-import { Link } from "react-router-dom";
+type AppProps = {
+  txOverview: TxOverviewProps
+}
 
-export default function App() {
+export default function App({ txOverview }: AppProps) {
   return (
     <div className="App">
       <h1>FIP</h1>
-      <Link to="/submitTx"> <button style={{float:"right"}}> Add a New Transaction </button> </Link>
+      <Link to="/submitTx">
+        {" "}
+        <button style={{ float: "right" }}> Add a New Transaction </button>{" "}
+      </Link>
       <table>
         <tr>
-          <th>Transaction Index</th>
-          <th>From</th>
-          <th>To</th>
+          <td>
+            <th>Transaction Index</th>
+            <th>From</th>
+            <th>To</th>
+            <br></br>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div>
+              <TxOverview
+                from={txOverview.from}
+                to={txOverview.to}
+                txIndex={txOverview.txIndex}
+              />
+            </div>
+          </td>
         </tr>
       </table>
     </div>
