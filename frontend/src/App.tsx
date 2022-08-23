@@ -1,4 +1,4 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import { ConnectionBadge } from "./components";
 import { Dashboard, NewTransaction, TransactionDetail } from "./pages";
@@ -14,7 +14,9 @@ export default function App() {
     >
       <Flex justifyContent="space-between" alignItems="center">
         <Flex alignItems="center">
-          <Heading>Foundry Web Tracer</Heading>
+          <Link to="/">
+            <Heading>Foundry Web Tracer</Heading>
+          </Link>
           <ConnectionBadge marginLeft={4} />
         </Flex>
         <Button colorScheme="blue" onClick={() => navigate("/transaction/new")}>
