@@ -1,4 +1,4 @@
-import { Route, Routes, useNavigate } from "react-router-dom"
+import { Link, Route, Routes, useNavigate } from "react-router-dom"
 import { Box, Button, Flex, Heading } from "@chakra-ui/react"
 import { ConnectionBadge } from "./components"
 import { Dashboard, NewTransaction, TransactionDetail } from "./pages"
@@ -18,10 +18,12 @@ export default function App() {
         paddingY={[10, 15, 20]}
       >
         <Flex justifyContent="space-between" alignItems="center">
-          <Flex alignItems="center">
-            <Heading className="text-white">Foundry Web Tracer</Heading>
-            <ConnectionBadge marginLeft={4} />
-          </Flex>
+          <Link to="/">
+            <Flex alignItems="center">
+              <Heading className="text-white">Foundry Web Tracer</Heading>
+              <ConnectionBadge marginLeft={4} />
+            </Flex>
+          </Link>
           <Button
             colorScheme="blue"
             onClick={() => navigate("/transaction/new")}
@@ -29,17 +31,18 @@ export default function App() {
             Trace New Transaction
           </Button>
         </Flex>
-
-        <Box paddingY={[10, 15, 20]}>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/transaction/new" element={<NewTransaction />} />
-            <Route
-              path="/transaction/:transactionId"
-              element={<TransactionDetail />}
-            />
-          </Routes>
-        </Box>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Box paddingY={[10, 15, 20]} width="1000px">
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/transaction/new" element={<NewTransaction />} />
+              <Route
+                path="/transaction/:transactionId"
+                element={<TransactionDetail />}
+              />
+            </Routes>
+          </Box>
+        </Flex>
       </Box>
     </div>
   )

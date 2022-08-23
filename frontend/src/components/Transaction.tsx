@@ -37,8 +37,8 @@ export default function Transaction({
       style={{ paddingLeft: 20 }}
     >
       <p className="py-2"> Status: {status} </p>
-      <p> From : {from} </p>
-      <p> To : {to} </p>
+      <p className="py-2"> From : {from} </p>
+      <p className="py-2"> To : {to} </p>
       <p className="py-2"> Value : {value} </p>
       <p className="py-2"> Transacton Fee : {transactionFee} </p>
       <p className="py-2"> Gas Price : {gasPrice} </p>
