@@ -1,12 +1,13 @@
 from flask import Flask, jsonify, request, send_from_directory, redirect, url_for
 from flask_cors import CORS
 from web3 import Web3
+import web3
 import os
 
 app = Flask(__name__)
 CORS(app)
-w3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545/'))
-# w3 = Web3(Web3.HTTPProvider(os.environ['WEB3_PROVIDER']))
+w3 = Web3(Web3.HTTPProvider("http://142.132.152.124:8546"))
+w3.middleware_onion.inject(web3.middleware.geth_poa_middleware, layer=0)
 trace_result = {}
 
 
@@ -34,22 +35,25 @@ def connected():
 
 @app.route("/sendTxn", methods=['POST'])
 def sendTransaction():
-    w3.eth.default_account = w3.toChecksumAddress(
-        "0x70997970c51812dc3a010c7d01b50e0d17dc79c8")
-    calldata = {
-        "to": w3.toChecksumAddress(request.form["to"]),
-        "from": w3.toChecksumAddress(request.form["from"]),
-        "value": request.form["value"],
-        "data": request.form["data"],
-        "gasPrice": request.form["gasPrice"],
-        "gasLimit": request.form["gasLimit"],
-    }
-    hexbytes = w3.eth.send_transaction(calldata)
-    response = {
-        "hexbytes": hexbytes.hex(),
-        "status": 200
-    }
-    return response
+    try:
+        w3.eth.default_account = w3.toChecksumAddress(
+            "0x70997970c51812dc3a010c7d01b50e0d17dc79c8")
+        calldata = {
+            "to": w3.toChecksumAddress(request.form["to"]),
+            "from": w3.toChecksumAddress(request.form["from"]),
+            "value": request.form["value"],
+            "data": request.form["data"],
+            "gasPrice": request.form["gasPrice"],
+            "gasLimit": request.form["gasLimit"],
+        }
+        hexbytes = w3.eth.send_transaction(calldata)
+        response = {
+            "hexbytes": hexbytes.hex(),
+            "status": 200
+        }
+        return response
+    except ValueError as e:
+        return e
 
 
 @app.route("/sendDump", methods=['POST'])
@@ -64,9 +68,6 @@ def sendDump():
     """
     # receive request
 
-    # connect to Alchemy
-    w3 = Web3(Web3.HTTPProvider(
-        'https://eth-goerli.g.alchemy.com/v2/rhjw9cPkkulUIuk1Ol7nUbDhHl539fbO/'))
     # construct call args, block num or hash, trace config, override
     call_args = request.form["call_args"]
     # get the parent block that we've used
