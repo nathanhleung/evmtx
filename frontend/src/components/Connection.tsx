@@ -13,7 +13,7 @@ export default function Connection() {
         process.env.REACT_APP_SERVER_URL + "/connected"
       );
       const data = result.data;
-      setConnected(data === "true");
+      setConnected(data || data === "true");
     }, 1000);
     return () => clearInterval(interval);
   }, [connected]);
