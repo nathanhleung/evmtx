@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 
-export default function SubmitTx() {
+export default function NewTransaction() {
   const [transactionData, setTransactionData] = useState("");
   const [value, setValue] = useState("");
   const [toAddress, setToAddress] = useState("");
@@ -29,7 +29,7 @@ export default function SubmitTx() {
     setLoading(false);
   };
   return (
-    <div className="SubmitTx">
+    <div>
       <p>Trace Ethereum transactions with Foundry</p>
       <form onSubmit={handleSubmit}>
         <br />
