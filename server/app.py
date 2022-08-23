@@ -54,8 +54,8 @@ def sendDump():
     # receive request
 
     # connect to geth
-    w3 = Web3(Web3.HTTPProvider(
-        '142.132.152.124:8546'))
+    w3 = Web3(Web3.HTTPProvider("http://142.132.152.124:8546"))
+    w3.middleware_onion.inject(w3.middleware.geth_poa_middleware, layer=0)
     # construct call args, block num or hash, trace config, override
     call_args = request.form["call_args"]
     # get the parent block that we've used
