@@ -1,15 +1,15 @@
-import { useParams } from "react-router-dom";
-import { TraceBoard, Transaction } from "../components/";
-import { TraceProps } from "../components/Trace";
-import { TransactionResultProp } from "../components/Transaction";
+import { useParams } from "react-router-dom"
+import { TraceBoard, Transaction } from "../components/"
+import { TraceProps } from "../components/Trace"
+import { TransactionResultProp } from "../components/Transaction"
 
 export default function TransactionDetail() {
-  const { transactionId } = useParams();
+  const { transactionId } = useParams()
 
   const txnResult: TransactionResultProp = {
     exeStatus: true,
-    from: "",
-    to: "",
+    from: "0xCB2975c5109212fbdCb169a79Eb6eCc84F5D64e3",
+    to: "0xCB2975c5109212fbdCb169a79Eb6eCc84F5D64e3",
     gasPrice: 0,
     value: 0,
     maxPriorityFeePerGas: 0,
@@ -17,9 +17,9 @@ export default function TransactionDetail() {
     gasLimit: 0,
     gasUsage: 0,
     inputData: "",
-    transactionFee: 0,
-  };
-  const traces: TraceProps[] = [];
+    transactionFee: 0
+  }
+  const traces: TraceProps[] = []
 
   return (
     <div>
@@ -38,5 +38,5 @@ export default function TransactionDetail() {
         inputData={txnResult.inputData}
       />
     </div>
-  );
+  )
 }
