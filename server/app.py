@@ -53,14 +53,17 @@ def getGasPrice():
 
 @app.route("/sendTxn", methods=['POST'])
 def sendTransaction():
-    local_w3.eth.default_account = local_w3.toChecksumAddress(
-        "0x70997970c51812dc3a010c7d01b50e0d17dc79c8")
     calldata = {
         "to": local_w3.toChecksumAddress(request.form["to"]),
-        "from": local_w3.eth.default_account,
-        "value": request.form["value"]
+        "from": local_w3.toChecksumAddress(request.form["from"]),
+        "value": request.form["value"],
+        "data": request.form["data"]
     }
     hexbytes = local_w3.eth.send_transaction(calldata)
+    
+    stateDiff = local_w3.manager.request_blocking("anvil_dumpStateJson", [])
+
+    
     response = jsonify({
         "hexbytes": hexbytes.hex(),
     })
@@ -68,7 +71,6 @@ def sendTransaction():
     return response
 
 
-@app.route("/sendDump", methods=['POST', 'GET'])
 def sendDump():
     """
     override = 
