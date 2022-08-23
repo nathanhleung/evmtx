@@ -6,36 +6,38 @@ import { Dashboard, NewTransaction, TransactionDetail } from "./pages"
 
 export default function App() {
   return (
-    <Box
-      maxWidth={["100%", "80%", "60%"]}
-      margin="0 auto"
-      paddingY={[10, 15, 20]}
-    >
-      <Flex justifyContent="space-between" alignItems="center" mb={2}>
-        <Flex alignItems="center">
-          <RouterLink to="/">
-            <Heading>Foundry Web Tracer</Heading>
-          </RouterLink>
-          <ConnectionBadge marginLeft={4} />
+    <div className="text-white bg-[#0E1B2D] min-h-screen">
+      <Box
+        maxWidth={["100%", "80%", "60%"]}
+        margin="0 auto"
+        paddingY={[10, 15, 20]}
+      >
+        <Flex justifyContent="space-between" alignItems="center" mb={2}>
+          <Flex alignItems="center">
+            <RouterLink to="/">
+              <Heading className="text-white">Foundry Web Tracer</Heading>
+            </RouterLink>
+            <ConnectionBadge marginLeft={4} />
+          </Flex>
+          <Link href="https://github.com/nathanhleung/fip" target="_blank">
+            <Icon as={FaGithub} boxSize={8} />
+          </Link>
         </Flex>
-        <Link href="https://github.com/nathanhleung/fip" target="_blank">
-          <Icon as={FaGithub} boxSize={8} />
-        </Link>
-      </Flex>
-      <Text color="gray.500">
-        Trace Ethereum transactions on the web using Foundry
-      </Text>
+        <Text color="gray.500">
+          Trace Ethereum transactions on the web using Foundry
+        </Text>
 
-      <Box paddingY={[10, 15, 20]}>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/transaction/new" element={<NewTransaction />} />
-          <Route
-            path="/transaction/:transactionId"
-            element={<TransactionDetail />}
-          />
-        </Routes>
+        <Box paddingY={[10, 15, 20]}>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/transaction/new" element={<NewTransaction />} />
+            <Route
+              path="/transaction/:transactionId"
+              element={<TransactionDetail />}
+            />
+          </Routes>
+        </Box>
       </Box>
-    </Box>
+    </div>
   )
 }
