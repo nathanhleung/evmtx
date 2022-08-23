@@ -1,42 +1,37 @@
-import "./App.css";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import { Box, Button, Flex, Heading } from "@chakra-ui/react";
+import { ConnectionBadge } from "./components";
+import { Dashboard, NewTransaction, TransactionDetail } from "./pages";
 
-import { Link } from "react-router-dom";
-import Connection from "./components/Connection";
-import TxOverview from "./components/TxOverview";
-import { TxOverviewProps } from "./components/TxOverview";
+export default function App() {
+  const navigate = useNavigate();
 
-type AppProps = {
-  txOverview: TxOverviewProps[]
-}
+  return (
+    <Box
+      maxWidth={["100%", "80%", "60%"]}
+      margin="0 auto"
+      paddingY={[10, 15, 20]}
+    >
+      <Flex justifyContent="space-between" alignItems="center">
+        <Flex alignItems="center">
+          <Heading>Foundry Web Tracer</Heading>
+          <ConnectionBadge marginLeft={4} />
+        </Flex>
+        <Button colorScheme="blue" onClick={() => navigate("/transaction/new")}>
+          Trace New Transaction
+        </Button>
+      </Flex>
 
-export default function App({ txOverview }: AppProps) {
-  const txOverviews = txOverview.map((tx) =>
-    <tr>
-      <td>
-        <div>
-          <TxOverview from={tx.from} to={tx.to} txIndex={tx.txIndex} ></TxOverview>
-        </div>
-      </td>
-    </tr>
-  ); return (
-    <div className="App">
-      <h1>FIP</h1>
-      <Connection />
-      <Link to="/submitTx">
-        {" "}
-        <button style={{ float: "right" }}> Add a New Transaction </button>{" "}
-      </Link>
-      <table>
-        <tr>
-          <td>
-            <th>Transaction Index</th>
-            <th>From</th>
-            <th>To</th>
-            <br></br>
-          </td>
-        </tr>
-        {txOverviews}
-      </table>
-    </div>
+      <Box paddingY={[10, 15, 20]}>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/transaction/new" element={<NewTransaction />} />
+          <Route
+            path="/transaction/:transactionId"
+            element={<TransactionDetail />}
+          />
+        </Routes>
+      </Box>
+    </Box>
   );
 }
