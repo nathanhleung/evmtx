@@ -8,11 +8,7 @@ https://docs.google.com/document/d/1-w4HLSqg33S1ddFUrqK8TfzONr_gYvMFLGu2tBQc7Iw/
 
 ### Running
 
-1. Run `make frontend-build` to build the frontend static site
-1. Run `git submodule update --init --recursive` to download our fork of Foundry
-1. Run `pip install -r requirements.txt` to install Python dependencies
-1. Run `make anvil` to build our fork of Foundry
-1. Run `make cli` to run the app
+After cloning the repo, run `make all` to download all dependencies and start the app.
 
 ### Development
 
@@ -24,6 +20,7 @@ https://docs.google.com/document/d/1-w4HLSqg33S1ddFUrqK8TfzONr_gYvMFLGu2tBQc7Iw/
 
 ### Troubleshooting
 
+- Make sure you've built the latest version of the frontend
 - Make sure you have a recent version of Rust installed (tested on Rust v1.63.0)
 - Make sure you have a recent version of Node/NPM installed (tested on Node v16.14.0, NPM v8.3.1)
 
