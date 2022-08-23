@@ -4,11 +4,19 @@ import TxOverview from "./components/TxOverview"
 import { TxOverviewProps } from "./components/TxOverview"
 
 type AppProps = {
-  txOverview: TxOverviewProps
+  txOverview: TxOverviewProps[]
 }
 
 export default function App({ txOverview }: AppProps) {
-  return (
+  const txOverviews = txOverview.map((tx) =>
+    <tr>
+      <td>
+        <div>
+          <TxOverview from={tx.from} to={tx.to} txIndex={tx.txIndex} ></TxOverview>
+        </div>
+      </td>
+    </tr>
+  ); return (
     <div className="App">
       <h1>FIP</h1>
       <Link to="/submitTx">
@@ -24,17 +32,7 @@ export default function App({ txOverview }: AppProps) {
             <br></br>
           </td>
         </tr>
-        <tr>
-          <td>
-            <div>
-              <TxOverview
-                from={txOverview.from}
-                to={txOverview.to}
-                txIndex={txOverview.txIndex}
-              />
-            </div>
-          </td>
-        </tr>
+        {txOverviews}
       </table>
     </div>
   )

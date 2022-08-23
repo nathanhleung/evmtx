@@ -46,6 +46,7 @@
     ]
   },
   "devDependencies": {
+    "@types/styled-components": "^5.1.26",
     "tailwindcss": "^3.1.8"
   }
 }

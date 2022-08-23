@@ -9,18 +9,7 @@ root.render(
   <React.StrictMode>
     <Router>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <App
-              txOverview={{
-                from: "",
-                to: "",
-                txIndex: 0
-              }}
-            />
-          }
-        >
+        <Route path="/" element={<App txOverview={[]} />}>
           {" "}
         </Route>
         <Route path="/submitTx" element={<SubmitTx />}>
