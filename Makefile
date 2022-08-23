@@ -1,4 +1,4 @@
-.PHONY: frontend server cli
+.PHONY: frontend frontend-build server cli anvil all
 
 frontend:
 	cd frontend && \
@@ -16,4 +16,9 @@ cli:
 	cd cli && python3 main.py --rpc-url http://142.132.152.124:8546
 
 anvil:
-	cd foundry && cargo build
+	git submodule update --init --recursive && \
+		cd foundry && cargo build
+
+all: frontend-build anvil
+	pip install -r requirements.txt && \
+		make cli
