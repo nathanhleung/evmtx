@@ -34,10 +34,10 @@ def sendTransaction():
         "value": request.form["value"]
     }
     hexbytes = w3.eth.send_transaction(calldata)
-    response = {
+    response = jsonify({
       "hexbytes": hexbytes.hex(),
-      "status": 200
-    }
+    })
+    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
@@ -69,10 +69,10 @@ def sendDump():
         "debug_traceCall",
         [call_args, block_n_hash, config],
     )
-    response = {
+    response = jsonify({
       "trace": trace_result,
-      "status": 200
-    }
+    })
+    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 @app.route("/getTrace", methods=['POST'])
