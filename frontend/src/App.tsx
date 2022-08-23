@@ -1,11 +1,10 @@
-import { Link, Route, Routes, useNavigate } from "react-router-dom";
-import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
+import { FaGithub } from "react-icons/fa";
+import { Route, Link as RouterLink, Routes } from "react-router-dom";
+import { Box, Flex, Heading, Icon, Link, Text } from "@chakra-ui/react";
 import { ConnectionBadge } from "./components";
 import { Dashboard, NewTransaction, TransactionDetail } from "./pages";
 
 export default function App() {
-  const navigate = useNavigate();
-
   return (
     <Box
       maxWidth={["100%", "80%", "60%"]}
@@ -14,17 +13,14 @@ export default function App() {
     >
       <Flex justifyContent="space-between" alignItems="center" mb={2}>
         <Flex alignItems="center">
-          <Link to="/">
+          <RouterLink to="/">
             <Heading>Foundry Web Tracer</Heading>
-          </Link>
+          </RouterLink>
           <ConnectionBadge marginLeft={4} />
         </Flex>
-        <Button
-          colorScheme="green"
-          onClick={() => navigate("/transaction/new")}
-        >
-          Trace New Transaction +
-        </Button>
+        <Link href="https://github.com/nathanhleung/fip" target="_blank">
+          <Icon as={FaGithub} boxSize={8} />
+        </Link>
       </Flex>
       <Text color="gray.500">
         Trace Ethereum transactions on the web using Foundry
