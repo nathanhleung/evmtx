@@ -1,3 +1,4 @@
+import os
 import signal
 import sys
 from subprocess import Popen
@@ -19,10 +20,17 @@ signal.signal(signal.SIGINT, handle_ctrl_c)
 parser = argparse.ArgumentParser(description='FIP')
 
 parser.add_argument(
-    '--port',
-    metavar='port',
+    '--frontend-port',
+    metavar='frontend_port',
     type=str,
     help='the port to run the frontend on'
+)
+
+parser.add_argument(
+    '--backend-port',
+    metavar='backend_port',
+    type=str,
+    help='the port to run the backend on'
 )
 
 parser.add_argument(
@@ -32,13 +40,33 @@ parser.add_argument(
     help='the block number to fork from'
 )
 
+parser.add_argument(
+    '--rpc-url',
+    metavar='rpc_url',
+    type=str,
+    help='the url of an ethereum rpc that supports debug_traceCall',
+    required=True
+)
+
 args = parser.parse_args()
 
-port = args.port or 3000
-block_number = args.block_number or 1000
+frontend_port = args.frontend_port or 3000
+backend_port = args.backend_port or 9000
+block_number = args.block_number or 6000000
+rpc_url = args.rpc_url
 
-print("Running frontend on port " + str(port))
+print("Running frontend on port " + str(frontend_port))
+print("Running backend on port " + str(backend_port))
 print("Forking chain from block " + str(block_number))
+print("Using RPC at " + rpc_url)
+print()
+
+
+environment = os.environ.copy()
+environment["ANVIL_RPC_URL"] = "http://localhost:8545"
+environment["BLOCK_NUMBER"] = str(block_number)
+environment["DEBUG_RPC_URL"] = rpc_url
+environment["FRONTEND_URL"] = "http://localhost:" + str(frontend_port)
 
 processes = [
     Popen([
@@ -48,10 +76,20 @@ processes = [
         "--app",
         "../server/app",
         "run",
-        "--port=" + str(port),
+        "--port=" + str(backend_port),
+    ], env=environment),
+    Popen([
+        sys.executable,
+        "-m",
+        "http.server",
+        "--directory",
+        "../frontend/build",
+        str(frontend_port),
     ]),
     Popen([
-        "anvil",
+        "../foundry/target/debug/anvil",
+        "--fork-url",
+        rpc_url,
         "--fork-block-number",
         str(block_number)
     ])
