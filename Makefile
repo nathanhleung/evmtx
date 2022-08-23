@@ -3,9 +3,7 @@
 frontend:
 	cd frontend && \
 		npm install && \
-		npm run build && \
-		rm -rf ../server/static && \
-		cp -r build ../server/static
+		npm run start
 
 server:
 	cd server && python -m flask run --port 9000

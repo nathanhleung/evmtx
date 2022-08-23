@@ -1,29 +1,33 @@
-import axios from "axios"
-import React, { useState } from "react"
+import axios from "axios";
+import React, { useState } from "react";
 
 export default function SubmitTx() {
-  const [transactionData, setTransactionData] = useState("")
-  const [value, setValue] = useState("")
-  const [toAddress, setToAddress] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [transactionData, setTransactionData] = useState("");
+  const [value, setValue] = useState("");
+  const [toAddress, setToAddress] = useState("");
+  const [loading, setLoading] = useState(false);
   const [fromAddress, setFromAddress] = useState(
     "0x0000000000000000000000000000000000000000"
-  )
-  const [gasPrice, setGasPrice] = useState("")
-  const [gasLimit, setGasLimit] = useState("")
+  );
+  const [gasPrice, setGasPrice] = useState("");
+  const [gasLimit, setGasLimit] = useState("");
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    const data = new FormData()
-    data.append("to", toAddress)
-    data.append("value", value)
-    data.append("data", transactionData)
-    data.append("from", fromAddress)
-    data.append("gasPrice", gasPrice)
-    data.append("gasLimit", gasLimit)
-    axios.post("/sendTxn", data)
-    setTimeout(() => setLoading(false), 1000)
-  }
+    e.preventDefault();
+    setLoading(true);
+    const data = new FormData();
+    data.append("to", toAddress);
+    data.append("value", value);
+    data.append("data", transactionData);
+    data.append("from", fromAddress);
+    data.append("gasPrice", gasPrice);
+    data.append("gasLimit", gasLimit);
+    const result = await axios.post(
+      process.env.REACT_APP_SERVER_URL + "/sendTxn",
+      data
+    );
+    console.log(result.data);
+    setLoading(false);
+  };
   return (
     <div className="SubmitTx">
       <p>Trace Ethereum transactions with Foundry</p>
@@ -85,5 +89,5 @@ export default function SubmitTx() {
         </button>
       </form>
     </div>
-  )
+  );
 }

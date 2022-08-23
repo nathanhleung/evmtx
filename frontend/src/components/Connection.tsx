@@ -9,8 +9,10 @@ export default function Connection() {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const result = await axios.get("http://127.0.0.1:9000//connected");
-      const data = result.data.result;
+      const result = await axios.get(
+        process.env.REACT_APP_SERVER_URL + "/connected"
+      );
+      const data = result.data;
       setConnected(data === "true");
     }, 1000);
     return () => clearInterval(interval);
