@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 from web3 import Web3
+import web3
 import os
 
 app = Flask(__name__)
@@ -41,7 +42,7 @@ def sendTransaction():
     return response
 
 
-@app.route("/sendDump", methods=['POST'])
+@app.route("/sendDump", methods=['POST', 'GET'])
 def sendDump():
     """
     override = 
@@ -55,24 +56,29 @@ def sendDump():
 
     # connect to geth
     w3 = Web3(Web3.HTTPProvider("http://142.132.152.124:8546"))
-    w3.middleware_onion.inject(w3.middleware.geth_poa_middleware, layer=0)
+    w3.middleware_onion.inject(web3.middleware.geth_poa_middleware, layer=0)
     # construct call args, block num or hash, trace config, override
-    call_args = request.form["call_args"]
-    # get the parent block that we've used
-    block_n_hash = os.environ["BLOCK_NUM"]
-    config = {
-        "stateoverrides": request.form["override"],
-        "tracer": request.form["tracer"]
-    }
-    # send state changes back with debug_traceCall to alchemy
+    # call_args = request.form["call_args"]
+    # # get the parent block that we've used
+    # block_n_hash = os.environ["BLOCK_NUM"]
+    # config = {
+    #     "stateoverrides": request.form["override"],
+    #     "tracer": request.form["tracer"]
+    # }
+    # # send state changes back with debug_traceCall to alchemy
 
-    trace_result = w3.manager.request_blocking(
-        "debug_traceCall",
-        [call_args, block_n_hash, config],
-    )
-    response = jsonify({
-      "trace": trace_result,
-    })
+    # trace_result = w3.manager.request_blocking(
+    #     "debug_traceCall",
+    #     [call_args, block_n_hash, config],
+    # )
+    # response = jsonify({
+    #   "trace": trace_result,
+    # })
+    assert not w3.isConnected(), "Not connected"
+    response = jsonify({"result": "false"})
+    if w3.isConnected():
+      response = jsonify({"result": "true",
+      })
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
