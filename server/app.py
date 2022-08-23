@@ -60,7 +60,7 @@ def sendTransaction():
         "value": request.form["value"],
         "data": request.form["data"]
     }
-    hexbytes = local_w3.eth.send_transaction(calldata)
+    hexbytes = local_w3.manager.request_blocking("eth_sendUnsignedTransaction", [calldata])
 
     traceResults = sendDump(calldata, os.getenv("BLOCK_NUMBER"))
     response = jsonify({
