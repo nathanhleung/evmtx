@@ -1,8 +1,11 @@
-from flask import Flask, jsonify, request, send_from_directory, redirect, url_for
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+
 from web3 import Web3
 import os
 
 app = Flask(__name__)
+CORS(app, resources={r"/": {"origins": "http://localhost:3000"}})
 w3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545/'))
 # w3 = Web3(Web3.HTTPProvider(os.environ['WEB3_PROVIDER']))
 trace_result = {}
@@ -10,24 +13,15 @@ trace_result = {}
 
 @app.route("/")
 def index():
-    """
-    Redirects the root / route to the /app route which 
-    serves the frontend
-    """
-    return redirect(url_for('frontend_app', path='index.html'), 301)
-
-
-@app.route("/app/<path:path>")
-def frontend_app(path):
-    return send_from_directory('static', path)
-
+    return "<p>Hello world</p>"
 
 @app.route("/connected")
 def connected():
-    if w3.isConnected():
-        return "true"
-    else:
-        return "false"
+  response = jsonify({"result": "false"})
+  if w3.isConnected():
+      response = jsonify({"result": "true"})
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  return response
 
 
 @app.route("/sendTxn", methods=['POST'])
@@ -36,16 +30,13 @@ def sendTransaction():
         "0x70997970c51812dc3a010c7d01b50e0d17dc79c8")
     calldata = {
         "to": w3.toChecksumAddress(request.form["to"]),
-        "from": w3.toChecksumAddress(request.form["from"]),
-        "value": request.form["value"],
-        "data": request.form["data"],
-        "gasPrice": request.form["gasPrice"],
-        "gasLimit": request.form["gasLimit"],
+        "from": w3.eth.default_account,
+        "value": request.form["value"]
     }
     hexbytes = w3.eth.send_transaction(calldata)
     response = {
-        "hexbytes": hexbytes.hex(),
-        "status": 200
+      "hexbytes": hexbytes.hex(),
+      "status": 200
     }
     return response
 
@@ -79,12 +70,11 @@ def sendDump():
         [call_args, block_n_hash, config],
     )
     response = {
-        "trace": trace_result,
-        "status": 200
+      "trace": trace_result,
+      "status": 200
     }
     return response
 
-
 @app.route("/getTrace", methods=['POST'])
 def getTrace():
-    return trace_result
+  return trace_result

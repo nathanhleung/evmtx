@@ -9,12 +9,12 @@ export default function Connection() {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const result = await axios.get("/connected");
-      const data = result.data;
+      const result = await axios.get("http://127.0.0.1:9000//connected");
+      const data = result.data.result;
       setConnected(data === "true");
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [connected]);
 
   return <div>{connected ? "Connected" : "Not Connected"}</div>;
 }
