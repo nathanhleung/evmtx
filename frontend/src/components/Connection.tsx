@@ -9,7 +9,9 @@ export default function Connection() {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const result = await axios.get("/connected");
+      const result = await axios.get(
+        process.env.REACT_APP_SERVER_URL + "/connected"
+      );
       const data = result.data;
       setConnected(data === "true");
     }, 1000);
