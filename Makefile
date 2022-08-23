@@ -10,3 +10,6 @@ server:
 
 cli:
 	cd cli && python main.py
+
+anvil:
+	cd foundry && cargo build

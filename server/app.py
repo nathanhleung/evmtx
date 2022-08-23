@@ -74,7 +74,7 @@ def sendDump():
     # response = jsonify({
     #   "trace": trace_result,
     # })
-    assert not w3.isConnected(), "Not connected"
+    assert w3.isConnected(), "Not connected"
     response = jsonify({"result": "false"})
     if w3.isConnected():
       response = jsonify({"result": "true",
