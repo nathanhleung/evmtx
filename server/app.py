@@ -14,6 +14,11 @@ debug_rpc_url = os.environ['DEBUG_RPC_URL']
 frontend_url = os.environ['FRONTEND_URL']
 
 local_w3 = Web3(Web3.HTTPProvider(anvil_rpc_url))
+local_w3.middleware_onion.inject(
+    web3.middleware.geth_poa_middleware,
+    layer=0
+)
+
 debug_w3 = Web3(Web3.HTTPProvider(debug_rpc_url))
 debug_w3.middleware_onion.inject(
     web3.middleware.geth_poa_middleware,
@@ -27,7 +32,7 @@ trace_result = {}
 
 @app.route("/")
 def index():
-    return redirect(frontend_url, code=301)
+    return redirect(frontend_url)
 
 
 @app.route("/connected")
@@ -39,7 +44,7 @@ def connected():
     return response
 
 
-@app.route("/gasPrirce", methods=["POST", "GET"])
+@app.route("/gasPrice", methods=["POST", "GET"])
 def getGasPrice():
     response = jsonify({"gasPrice": gas_price})
     response.headers.add('Access-Control-Allow-Origin', '*')
