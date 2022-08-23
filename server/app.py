@@ -53,9 +53,9 @@ def sendDump():
     """
     # receive request
 
-    # connect to Alchemy
+    # connect to geth
     w3 = Web3(Web3.HTTPProvider(
-        'https://eth-goerli.g.alchemy.com/v2/rhjw9cPkkulUIuk1Ol7nUbDhHl539fbO/'))
+        '142.132.152.124:8546'))
     # construct call args, block num or hash, trace config, override
     call_args = request.form["call_args"]
     # get the parent block that we've used
@@ -65,6 +65,7 @@ def sendDump():
         "tracer": request.form["tracer"]
     }
     # send state changes back with debug_traceCall to alchemy
+
     trace_result = w3.manager.request_blocking(
         "debug_traceCall",
         [call_args, block_n_hash, config],
