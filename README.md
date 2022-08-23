@@ -10,6 +10,7 @@ https://docs.google.com/document/d/1-w4HLSqg33S1ddFUrqK8TfzONr_gYvMFLGu2tBQc7Iw/
 
 1. Run `make frontend-build` to build the frontend static site
 1. Run `git submodule update --init --recursive` to download our fork of Foundry
+1. Run `pip install -r requirements.txt` to install Python dependencies
 1. Run `make anvil` to build our fork of Foundry
 1. Run `make cli` to run the app
 
