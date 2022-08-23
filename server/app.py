@@ -1,8 +1,10 @@
 from flask import Flask, jsonify, request, send_from_directory, redirect, url_for
+from flask_cors import CORS
 from web3 import Web3
 import os
 
 app = Flask(__name__)
+CORS(app)
 w3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545/'))
 # w3 = Web3(Web3.HTTPProvider(os.environ['WEB3_PROVIDER']))
 trace_result = {}
