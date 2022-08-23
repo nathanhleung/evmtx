@@ -1,7 +1,9 @@
-import "./App.css"
-import { Link } from "react-router-dom"
-import TxOverview from "./components/TxOverview"
-import { TxOverviewProps } from "./components/TxOverview"
+import "./App.css";
+
+import { Link } from "react-router-dom";
+import Connection from "./components/Connection";
+import TxOverview from "./components/TxOverview";
+import { TxOverviewProps } from "./components/TxOverview";
 
 type AppProps = {
   txOverview: TxOverviewProps[]
@@ -19,6 +21,7 @@ export default function App({ txOverview }: AppProps) {
   ); return (
     <div className="App">
       <h1>FIP</h1>
+      <Connection />
       <Link to="/submitTx">
         {" "}
         <button style={{ float: "right" }}> Add a New Transaction </button>{" "}
@@ -35,5 +38,5 @@ export default function App({ txOverview }: AppProps) {
         {txOverviews}
       </table>
     </div>
-  )
+  );
 }

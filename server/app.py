@@ -1,36 +1,29 @@
-from flask import Flask, jsonify, request, send_from_directory, redirect, url_for
+from flask import Flask, jsonify, request
 from flask_cors import CORS
+
 from web3 import Web3
 import web3
 import os
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/": {"origins": "http://localhost:3000"}})
 w3 = Web3(Web3.HTTPProvider("http://142.132.152.124:8546"))
 w3.middleware_onion.inject(web3.middleware.geth_poa_middleware, layer=0)
+
 trace_result = {}
 
 
 @app.route("/")
 def index():
-    """
-    Redirects the root / route to the /app route which 
-    serves the frontend
-    """
-    return redirect(url_for('frontend_app', path='index.html'), 301)
-
-
-@app.route("/app/<path:path>")
-def frontend_app(path):
-    return send_from_directory('static', path)
-
+    return "<p>Hello world</p>"
 
 @app.route("/connected")
 def connected():
-    if w3.isConnected():
-        return "true"
-    else:
-        return "false"
+  response = jsonify({"result": "false"})
+  if w3.isConnected():
+      response = jsonify({"result": "true"})
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  return response
 
 
 @app.route("/sendTxn", methods=['POST'])
@@ -51,6 +44,7 @@ def sendTransaction():
             "hexbytes": hexbytes.hex(),
             "status": 200
         }
+        response.headers.add('Access-Control-Allow-Origin', '*')
         return response
     except ValueError as e:
         return e
@@ -81,13 +75,12 @@ def sendDump():
         "debug_traceCall",
         [call_args, block_n_hash, config],
     )
-    response = {
-        "trace": trace_result,
-        "status": 200
-    }
+    response = jsonify({
+      "trace": trace_result,
+    })
+    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
-
 
 @app.route("/getTrace", methods=['POST'])
 def getTrace():
-    return trace_result
+  return trace_result
