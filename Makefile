@@ -16,7 +16,7 @@ cli:
 	cd cli && python3 main.py --rpc-url http://142.132.152.124:8546
 
 anvil:
-	git submodule update --init --recursive && \
+	git submodule update --remote --merge && \
 		cd foundry && cargo build
 
 all: frontend-build anvil
