@@ -6,9 +6,16 @@ import { TraceBoard, Transaction } from "../components/";
 import { TraceProps } from "../components/Trace";
 import { TransactionResultProp } from "../components/Transaction";
 
+type Trace = {
+  from: string;
+  to: string;
+  username: string;
+  identation: number;
+};
+
 export default function TransactionDetail() {
   const { transactionId } = useParams();
-  const [traces, setTraces] = useState();
+  const [traces, setTraces] = useState<Trace[]>();
   const [transactionData, setTransactionData] = useState();
 
   useEffect(() => {
@@ -16,7 +23,7 @@ export default function TransactionDetail() {
       .get(process.env.REACT_APP_SERVER_URL + "/transactions/" + transactionId)
       .then((response) => {
         console.log(response.data);
-        setTrace(response.data.traces);
+        setTraces(response.data.traces);
       });
   }, [transactionId]);
   const txnResult: TransactionResultProp = {
@@ -32,11 +39,10 @@ export default function TransactionDetail() {
     inputData: "",
     transactionFee: 0,
   };
-  const traces: TraceProps[] = [];
 
   return (
     <div>
-      <TraceBoard traces={traces} />
+      <TraceBoard traces={traces ?? []} />
       <Transaction
         exeStatus={txnResult.exeStatus}
         from={txnResult.from}
@@ -51,7 +57,7 @@ export default function TransactionDetail() {
         inputData={txnResult.inputData}
       />
       <Box mt={4}>
-        <pre>{JSON.stringify(trace, null, 2)}</pre>
+        <pre>{JSON.stringify(traces, null, 2)}</pre>
       </Box>
     </div>
   );
