@@ -70,11 +70,11 @@ export default function NewTransaction() {
           />
         </FormControl>
         <FormControl className="py-1">
-          <FormLabel>Gas Price</FormLabel>
+          <FormLabel>Gas Price (gwei)</FormLabel>
           <Input
             color="black"
             value={gasPrice}
-            placeholder="GasPrice (wei)"
+            placeholder="GasPrice (gwei)"
             onChange={(e) => setGasPrice(e.target.value)}
             type="number"
             style={{ width: "50%" }}
@@ -82,11 +82,11 @@ export default function NewTransaction() {
           />
         </FormControl>
         <FormControl className="py-2">
-          <FormLabel>Gas Limit</FormLabel>
+          <FormLabel>Gas Limit (gwei)</FormLabel>
           <Input
             color="black"
             value={gasLimit}
-            placeholder="GasLimit (wei)"
+            placeholder="GasLimit (gwei)"
             onChange={(e) => setGasLimit(e.target.value)}
             type="number"
             style={{ width: "50%" }}

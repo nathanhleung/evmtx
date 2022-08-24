@@ -7,7 +7,7 @@ import web3.auto.gethdev as GethDev
 import os
 from util import tx_formatter
 from web3._utils.method_formatters import to_hex_if_integer
-import json 
+import json
 app = Flask(__name__)
 CORS(app, resources={r"/": {"origins": "http://localhost:3000"}})
 
@@ -61,7 +61,7 @@ def sendTransaction():
         "from": local_w3.toChecksumAddress(request.form["from"]),
         "value": int(request.form["value"]),
         "data": request.form["data"],
-        "gasPrice": int(request.form["gasPrice"])
+        "gasPrice": int(request.form["gasPrice"]) * 10e9
     })
     hexbytes = local_w3.manager.request_blocking(
         "eth_sendUnsignedTransaction", [calldata])
@@ -77,10 +77,11 @@ def sendTransaction():
 
 
 def sendDump(txData, block):
-    dump = json.loads(local_w3.manager.request_blocking("anvil_dumpStateJson", []))["accounts"]
+    dump = json.loads(local_w3.manager.request_blocking(
+        "anvil_dumpStateJson", []))["accounts"]
     for addr, state in dump.items():
         state["nonce"] = to_hex_if_integer(state["nonce"])
-        dump[addr] =  state
+        dump[addr] = state
     # tracer = ""
     # with open('/Users/haowang/coding/fip/server/tracer.txt') as f:
     #     tracer = f.readlines()
