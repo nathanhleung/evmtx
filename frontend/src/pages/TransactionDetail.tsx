@@ -1,11 +1,20 @@
-import { useParams } from "react-router-dom"
-import { TraceBoard, Transaction } from "../components/"
-import { TraceProps } from "../components/Trace"
-import { TransactionResultProp } from "../components/Transaction"
+import axios from "axios";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { TraceBoard, Transaction } from "../components/";
+import { TraceProps } from "../components/Trace";
+import { TransactionResultProp } from "../components/Transaction";
 
 export default function TransactionDetail() {
-  const { transactionId } = useParams()
+  const { transactionId } = useParams();
 
+  useEffect(() => {
+    axios
+      .get(process.env.REACT_APP_SERVER_URL + "/getTx/" + transactionId)
+      .then((response) => {
+        console.log(response.data);
+      });
+  }, [transactionId]);
   const txnResult: TransactionResultProp = {
     exeStatus: true,
     from: "0xCB2975c5109212fbdCb169a79Eb6eCc84F5D64e3",
@@ -17,9 +26,9 @@ export default function TransactionDetail() {
     gasLimit: 0,
     gasUsage: 0,
     inputData: "",
-    transactionFee: 0
-  }
-  const traces: TraceProps[] = []
+    transactionFee: 0,
+  };
+  const traces: TraceProps[] = [];
 
   return (
     <div>
@@ -38,5 +47,5 @@ export default function TransactionDetail() {
         inputData={txnResult.inputData}
       />
     </div>
-  )
+  );
 }
