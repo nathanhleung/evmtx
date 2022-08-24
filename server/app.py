@@ -1,3 +1,4 @@
+from itertools import count
 from flask import Flask, jsonify, redirect, request
 from flask_cors import CORS
 
@@ -7,7 +8,7 @@ import web3.auto.gethdev as GethDev
 import os
 from util import tx_formatter
 from web3._utils.method_formatters import to_hex_if_integer
-import json 
+import json
 app = Flask(__name__)
 CORS(app, resources={r"/": {"origins": "http://localhost:3000"}})
 
@@ -29,7 +30,10 @@ debug_w3.middleware_onion.inject(
 )
 gas_price = int(debug_w3.eth.get_block(block_number)["baseFeePerGas"])
 
+counter = 0
 
+
+tx_data = {}
 trace_result = {}
 
 
@@ -54,8 +58,21 @@ def getGasPrice():
     return response
 
 
+@app.route("/getTx/<txid>", methods=["GET"])
+def getTransaction():
+    txId = int(txid)
+    traces = trace_result[txId]
+    result = []
+    for trace in traces:
+        result.append(
+            {"from": trace["from"], "to": trace["to"], "indentation": 0})
+    response = jsonify({"traces": result, "transactionData": tx_data[txId]})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
 @app.route("/sendTxn", methods=['POST'])
 def sendTransaction():
+    
     calldata = tx_formatter({
         "to": local_w3.toChecksumAddress(request.form["to"]),
         "from": local_w3.toChecksumAddress(request.form["from"]),
@@ -67,20 +84,27 @@ def sendTransaction():
         "eth_sendUnsignedTransaction", [calldata])
 
     traceResults = sendDump(calldata, int(os.getenv("BLOCK_NUMBER")))
-    print(traceResults)
+    traceResults = json.loads(traceResults)
+    trace_result[counter] = traceResults
+    tx_data[counter] = calldata
+    
     response = jsonify({
         "return": hexbytes,
-        "traceResults": Web3.toJSON(traceResults)
+        "traceResults": Web3.toJSON(traceResults),
+        "txIndex": counter
     })
+    counter += 1 
     response.headers.add('Access-Control-Allow-Origin', '*')
+    
     return response
 
 
 def sendDump(txData, block):
-    dump = json.loads(local_w3.manager.request_blocking("anvil_dumpStateJson", []))["accounts"]
+    dump = json.loads(local_w3.manager.request_blocking(
+        "anvil_dumpStateJson", []))["accounts"]
     for addr, state in dump.items():
         state["nonce"] = to_hex_if_integer(state["nonce"])
-        dump[addr] =  state
+        dump[addr] = state
     # tracer = ""
     # with open('/Users/haowang/coding/fip/server/tracer.txt') as f:
     #     tracer = f.readlines()
