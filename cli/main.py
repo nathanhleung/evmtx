@@ -52,7 +52,7 @@ args = parser.parse_args()
 
 frontend_port = args.frontend_port or 3000
 backend_port = args.backend_port or 9000
-block_number = args.block_number or 6000000
+block_number = args.block_number or 6500000
 rpc_url = args.rpc_url
 
 print("Running frontend on port " + str(frontend_port))
@@ -87,7 +87,7 @@ processes = [
         str(frontend_port),
     ]),
     Popen([
-        "../foundry/target/debug/anvil",
+        os.getcwd() + "/../foundry/target/debug/anvil", # hardcode this for now
         "--fork-url",
         rpc_url,
         "--fork-block-number",

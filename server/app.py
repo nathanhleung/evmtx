@@ -5,7 +5,9 @@ from web3 import Web3
 import web3
 import web3.auto.gethdev as GethDev
 import os
-
+from util import tx_formatter
+from web3._utils.method_formatters import to_hex_if_integer
+import json 
 app = Flask(__name__)
 CORS(app, resources={r"/": {"origins": "http://localhost:3000"}})
 
@@ -54,35 +56,40 @@ def getGasPrice():
 
 @app.route("/sendTxn", methods=['POST'])
 def sendTransaction():
-    calldata = {
+    calldata = tx_formatter({
         "to": local_w3.toChecksumAddress(request.form["to"]),
         "from": local_w3.toChecksumAddress(request.form["from"]),
-        "value": request.form["value"],
-        "data": request.form["data"]
-    }
-    hexbytes = local_w3.manager.request_blocking("eth_sendUnsignedTransaction", [calldata])
+        "value": int(request.form["value"]),
+        "data": request.form["data"],
+        "gasPrice": int(request.form["gasPrice"])
+    })
+    hexbytes = local_w3.manager.request_blocking(
+        "eth_sendUnsignedTransaction", [calldata])
 
-    traceResults = sendDump(calldata, os.getenv("BLOCK_NUMBER"))
+    traceResults = sendDump(calldata, int(os.getenv("BLOCK_NUMBER")))
+    print(traceResults)
     response = jsonify({
-        "hexbytes": hexbytes.hex(),
-        "traceResults": traceResults
+        "return": hexbytes,
+        "traceResults": Web3.toJSON(traceResults)
     })
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
 def sendDump(txData, block):
-    dump = local_w3.manager.request_blocking("anvil_dumpStateJson", [])
-    tracer = ""
-    with open('tracer.txt') as f:
-        tracer = f.readlines()
+    dump = json.loads(local_w3.manager.request_blocking("anvil_dumpStateJson", []))["accounts"]
+    for addr, state in dump.items():
+        state["nonce"] = to_hex_if_integer(state["nonce"])
+        dump[addr] =  state
+    # tracer = ""
+    # with open('/Users/haowang/coding/fip/server/tracer.txt') as f:
+    #     tracer = f.readlines()
     trace_result = debug_w3.manager.request_blocking(
         "debug_traceCall",
-        [txData, block, {
-            "stateoverrides": dump,
-            "tracer": tracer
-        }],
-    )
+        [txData, to_hex_if_integer(block), {
+            "stateOverrides": dump,
+            "tracer": "callTracer"
+        }])
     return trace_result
 
 
