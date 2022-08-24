@@ -1,13 +1,13 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Button } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 import {
+  Button,
   FormControl,
-  FormErrorMessage,
-  FormHelperText,
   FormLabel,
+  Input,
+  Textarea,
 } from "@chakra-ui/react";
-import { Input } from "@chakra-ui/react";
 
 export default function NewTransaction() {
   const [transactionData, setTransactionData] = useState("");
@@ -19,6 +19,8 @@ export default function NewTransaction() {
   );
   const [gasPrice, setGasPrice] = useState("");
   const [gasLimit, setGasLimit] = useState("");
+  const navigate = useNavigate();
+
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -35,6 +37,8 @@ export default function NewTransaction() {
         data
       );
       console.log(result.data);
+      console.log(JSON.stringify(result.data));
+      navigate(`/transaction/${result.data.txIndex}`);
     } catch (e) {
       console.error(e);
     } finally {
@@ -107,7 +111,7 @@ export default function NewTransaction() {
         </FormControl>
 
         <div className="py-2">
-          <textarea
+          <Textarea
             className="rounded-lg"
             color="black"
             placeholder="Transaction hex data"

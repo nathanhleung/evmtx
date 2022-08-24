@@ -59,43 +59,42 @@ def getGasPrice():
 
 
 @app.route("/getTx/<txid>", methods=["GET"])
-def getTransaction():
+def getTransaction(txid):
     txId = int(txid)
-    traces = trace_result[txId]
+    trace = trace_result[txId]
     result = []
-    for trace in traces:
-        result.append(
-            {"from": trace["from"], "to": trace["to"], "indentation": 0})
+    result.append(
+        {"from": trace["from"], "to": trace["to"], "indentation": 0})
     response = jsonify({"traces": result, "transactionData": tx_data[txId]})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
+
 @app.route("/sendTxn", methods=['POST'])
 def sendTransaction():
-    
+    global counter
     calldata = tx_formatter({
         "to": local_w3.toChecksumAddress(request.form["to"]),
         "from": local_w3.toChecksumAddress(request.form["from"]),
         "value": int(request.form["value"]),
         "data": request.form["data"],
-        "gasPrice": int(request.form["gasPrice"]) * 10e9
+        "gasPrice": int(int(request.form["gasPrice"]) * 10e9)
     })
     hexbytes = local_w3.manager.request_blocking(
         "eth_sendUnsignedTransaction", [calldata])
 
     traceResults = sendDump(calldata, int(os.getenv("BLOCK_NUMBER")))
-    traceResults = json.loads(traceResults)
     trace_result[counter] = traceResults
     tx_data[counter] = calldata
-    
+
     response = jsonify({
         "return": hexbytes,
         "traceResults": Web3.toJSON(traceResults),
         "txIndex": counter
     })
-    counter += 1 
+    counter += 1
     response.headers.add('Access-Control-Allow-Origin', '*')
-    
+
     return response
 
 
