@@ -1,6 +1,13 @@
 import axios from "axios"
 import React, { useState } from "react"
 import { Button } from "@chakra-ui/react"
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText
+} from "@chakra-ui/react"
+import { Input } from "@chakra-ui/react"
 
 export default function NewTransaction() {
   const [transactionData, setTransactionData] = useState("")
@@ -35,56 +42,69 @@ export default function NewTransaction() {
       style={{ padding: 20 }}
     >
       <form onSubmit={handleSubmit}>
-        <div className="py-2">
-          <span>To Address&nbsp;&nbsp;</span>
-          <input
+        <FormControl className="py-2">
+          <FormLabel>To Address</FormLabel>
+          <Input
+            color="black"
             value={toAddress}
             placeholder="To address"
             onChange={(e) => setToAddress(e.target.value)}
+            backgroundColor="white"
           />
-        </div>
-        <div className="py-2">
-          <span>Value&nbsp;&nbsp;</span>
-          <input
+        </FormControl>
+        <FormControl>
+          <FormLabel>Value</FormLabel>
+          <Input
+            color="black"
             value={value}
             placeholder="Value (wei)"
             onChange={(e) => setValue(e.target.value)}
             type="number"
             style={{ width: "50%" }}
+            backgroundColor="white"
           />
-        </div>
-        <div className="py-2">
-          <span>GasPrice&nbsp;&nbsp;</span>
-          <input
+        </FormControl>
+        <FormControl className="py-1">
+          <FormLabel>Gas Price</FormLabel>
+          <Input
+            color="black"
             value={gasPrice}
             placeholder="GasPrice (wei)"
             onChange={(e) => setGasPrice(e.target.value)}
             type="number"
             style={{ width: "50%" }}
+            backgroundColor="white"
           />
-        </div>
-        <div className="py-2">
-          <span>GasLimit&nbsp;&nbsp;</span>
-          <input
+        </FormControl>
+        <FormControl className="py-2">
+          <FormLabel>Gas Limit</FormLabel>
+          <Input
+            color="black"
             value={gasLimit}
             placeholder="GasLimit (wei)"
             onChange={(e) => setGasLimit(e.target.value)}
             type="number"
             style={{ width: "50%" }}
+            backgroundColor="white"
           />
-        </div>
-        <div className="py-2">
-          <span>From Address&nbsp;&nbsp;</span>
-          <input
+        </FormControl>
+        <FormControl className="py-2">
+          <FormLabel>From Address</FormLabel>
+          <Input
+            color="black"
             value={fromAddress}
             placeholder="From Address"
             onChange={(e) => setFromAddress(e.target.value)}
             type="string"
             style={{ width: "50%" }}
+            backgroundColor="white"
           />
-        </div>
+        </FormControl>
+
         <div className="py-2">
           <textarea
+            className="rounded-lg"
+            color="black"
             placeholder="Transaction hex data"
             value={transactionData}
             onChange={(e) => setTransactionData(e.target.value)}
