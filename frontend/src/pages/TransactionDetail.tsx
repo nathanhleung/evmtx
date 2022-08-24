@@ -1,18 +1,20 @@
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Box } from "@chakra-ui/react";
 import { TraceBoard, Transaction } from "../components/";
 import { TraceProps } from "../components/Trace";
 import { TransactionResultProp } from "../components/Transaction";
 
 export default function TransactionDetail() {
   const { transactionId } = useParams();
+  const [trace, setTrace] = useState();
 
   useEffect(() => {
     axios
       .get(process.env.REACT_APP_SERVER_URL + "/getTx/" + transactionId)
       .then((response) => {
-        console.log(response.data);
+        setTrace(response.data);
       });
   }, [transactionId]);
   const txnResult: TransactionResultProp = {
@@ -46,6 +48,9 @@ export default function TransactionDetail() {
         gasLimit={txnResult.gasLimit}
         inputData={txnResult.inputData}
       />
+      <Box mt={4}>
+        <pre>{JSON.stringify(trace, null, 2)}</pre>
+      </Box>
     </div>
   );
 }
