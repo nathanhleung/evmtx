@@ -6,7 +6,7 @@ import { Dashboard, NewTransaction, TransactionDetail } from "./pages";
 
 export default function App() {
   return (
-    <div className="text-white bg-[#0E1B2D] min-h-screen">
+    <div className="text-black bg-[#FFFFFF] min-h-screen">
       <Box
         maxWidth={["100%", "80%", "60%"]}
         margin="0 auto"
@@ -15,7 +15,7 @@ export default function App() {
         <Flex justifyContent="space-between" alignItems="center" mb={2}>
           <Flex alignItems="center">
             <RouterLink to="/">
-              <Heading className="text-white">Foundry Web Tracer</Heading>
+              <Heading className="text-black">Foundry Web Tracer</Heading>
             </RouterLink>
             <ConnectionBadge marginLeft={4} />
           </Flex>

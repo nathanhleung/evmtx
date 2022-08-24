@@ -46,7 +46,7 @@ export default function Dashboard() {
         </Heading>
         <Text color="gray.500">View your traced transactions here</Text>
         <Box mt={10}>
-          <Link as={RouterLink} color="green.500" to="/transactions/new">
+          <Link as={RouterLink} color="gray.500" to="/transactions/new">
             Trace New Transaction +
           </Link>
         </Box>
@@ -75,7 +75,7 @@ export default function Dashboard() {
         <Tbody>{transactionComponents}</Tbody>
       </Table>
       <Box mt={10} textAlign="center">
-        <Link as={RouterLink} color="green.500" to="/transactions/new">
+        <Link as={RouterLink} color="gray.500" to="/transactions/new">
           Trace New Transaction +
         </Link>
       </Box>

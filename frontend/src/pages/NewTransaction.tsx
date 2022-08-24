@@ -9,6 +9,7 @@ import {
   HStack,
   Input,
   Textarea,
+  VStack
 } from "@chakra-ui/react";
 
 export default function NewTransaction() {
@@ -62,10 +63,11 @@ export default function NewTransaction() {
   };
   return (
     <div
-      className="Transaction bg-sky-900 text-white font-semibold py-2 rounded-lg"
+      className="Transaction bg-zinc-200 text-black font-semibold py-2 rounded-lg"
       style={{ padding: 20 }}
     >
       <form onSubmit={handleSubmit}>
+        <VStack align="left">
         <HStack spacing={4}>
           <FormControl className="py-2">
             <FormLabel>From Address</FormLabel>
@@ -89,7 +91,6 @@ export default function NewTransaction() {
             />
           </FormControl>
         </HStack>
-        <HStack spacing={4}>
           <FormControl flex={1}>
             <FormLabel>Value</FormLabel>
             <Input
@@ -123,7 +124,6 @@ export default function NewTransaction() {
               type="number"
             />
           </FormControl> */}
-        </HStack>
         <FormControl>
           <FormLabel>Transaction Hex Data</FormLabel>
           <Textarea
@@ -137,6 +137,7 @@ export default function NewTransaction() {
             rows={10}
           />
         </FormControl>
+        </VStack>
         <Button type="submit" disabled={loading} colorScheme="green" mt={4}>
           {loading ? "Tracing..." : "Trace"}
         </Button>
