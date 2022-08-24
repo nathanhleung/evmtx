@@ -78,7 +78,7 @@ def sendTransaction():
         "from": local_w3.toChecksumAddress(request.form["from"]),
         "value": int(request.form["value"]),
         "data": request.form["data"],
-        "gasPrice": int(request.form["gasPrice"])
+        "gasPrice": int(request.form["gasPrice"]) * 10e9
     })
     hexbytes = local_w3.manager.request_blocking(
         "eth_sendUnsignedTransaction", [calldata])

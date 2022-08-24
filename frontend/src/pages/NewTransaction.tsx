@@ -1,41 +1,46 @@
-import axios from "axios"
-import React, { useState } from "react"
-import { Button } from "@chakra-ui/react"
+import axios from "axios";
+import React, { useState } from "react";
+import { Button } from "@chakra-ui/react";
 import {
   FormControl,
-  FormLabel,
   FormErrorMessage,
-  FormHelperText
-} from "@chakra-ui/react"
-import { Input } from "@chakra-ui/react"
+  FormHelperText,
+  FormLabel,
+} from "@chakra-ui/react";
+import { Input } from "@chakra-ui/react";
 
 export default function NewTransaction() {
-  const [transactionData, setTransactionData] = useState("")
-  const [value, setValue] = useState("")
-  const [toAddress, setToAddress] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [transactionData, setTransactionData] = useState("");
+  const [value, setValue] = useState("");
+  const [toAddress, setToAddress] = useState("");
+  const [loading, setLoading] = useState(false);
   const [fromAddress, setFromAddress] = useState(
     "0x0000000000000000000000000000000000000000"
-  )
-  const [gasPrice, setGasPrice] = useState("")
-  const [gasLimit, setGasLimit] = useState("")
+  );
+  const [gasPrice, setGasPrice] = useState("");
+  const [gasLimit, setGasLimit] = useState("");
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    const data = new FormData()
-    data.append("to", toAddress)
-    data.append("value", value)
-    data.append("data", transactionData)
-    data.append("from", fromAddress)
-    data.append("gasPrice", gasPrice)
-    data.append("gasLimit", gasLimit)
-    const result = await axios.post(
-      process.env.REACT_APP_SERVER_URL + "/sendTxn",
-      data
-    )
-    console.log(result.data)
-    setLoading(false)
-  }
+    e.preventDefault();
+    setLoading(true);
+    const data = new FormData();
+    data.append("to", toAddress);
+    data.append("value", value);
+    data.append("data", transactionData);
+    data.append("from", fromAddress);
+    data.append("gasPrice", gasPrice);
+    data.append("gasLimit", gasLimit);
+    try {
+      const result = await axios.post(
+        process.env.REACT_APP_SERVER_URL + "/sendTxn",
+        data
+      );
+      console.log(result.data);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div
       className="Transaction bg-sky-900 text-white font-semibold py-2 rounded-lg"
@@ -65,11 +70,11 @@ export default function NewTransaction() {
           />
         </FormControl>
         <FormControl className="py-1">
-          <FormLabel>Gas Price</FormLabel>
+          <FormLabel>Gas Price (gwei)</FormLabel>
           <Input
             color="black"
             value={gasPrice}
-            placeholder="GasPrice (wei)"
+            placeholder="GasPrice (gwei)"
             onChange={(e) => setGasPrice(e.target.value)}
             type="number"
             style={{ width: "50%" }}
@@ -77,11 +82,11 @@ export default function NewTransaction() {
           />
         </FormControl>
         <FormControl className="py-2">
-          <FormLabel>Gas Limit</FormLabel>
+          <FormLabel>Gas Limit (gwei)</FormLabel>
           <Input
             color="black"
             value={gasLimit}
-            placeholder="GasLimit (wei)"
+            placeholder="GasLimit (gwei)"
             onChange={(e) => setGasLimit(e.target.value)}
             type="number"
             style={{ width: "50%" }}
@@ -117,5 +122,5 @@ export default function NewTransaction() {
         </Button>
       </form>
     </div>
-  )
+  );
 }

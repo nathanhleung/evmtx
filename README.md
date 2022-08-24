@@ -43,3 +43,5 @@ The CLI runs the server. The server serves the frontend.
 ### Foundry
 
 Run `git submodule update --init --recursive` to download our fork of Foundry (specifically, Anvil), then `make anvil` to compile it
+
+Run `git submodule update --remote --merge` to update the submodule
