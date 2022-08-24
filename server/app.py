@@ -10,7 +10,7 @@ from util import tx_formatter
 from web3._utils.method_formatters import to_hex_if_integer
 import json
 app = Flask(__name__)
-CORS(app, resources={r"/": {"origins": "http://localhost:3000"}})
+CORS(app)
 
 anvil_rpc_url = os.environ['ANVIL_RPC_URL']
 block_number = os.environ["BLOCK_NUMBER"]
@@ -47,30 +47,21 @@ def connected():
     response = jsonify({"result": "false"})
     if local_w3.isConnected():
         response = jsonify({"result": "true"})
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
-@app.route("/gasPrice", methods=["POST", "GET"])
+@app.route("/gas-price", methods=["POST", "GET"])
 def getGasPrice():
     response = jsonify({"gasPrice": gas_price})
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
-@app.route("/getTx/<txid>", methods=["GET"])
-def getTransaction(txid):
-    txId = int(txid)
-    trace = trace_result[txId]
-    result = []
-    result.append(
-        {"from": trace["from"], "to": trace["to"], "indentation": 0})
-    response = jsonify({"traces": result, "transactionData": tx_data[txId]})
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
+@app.route("/transactions", methods=['GET'])
+def allTransactions():
+    return jsonify(tx_data)
 
 
-@app.route("/sendTxn", methods=['POST'])
+@app.route("/transactions/new", methods=['POST'])
 def sendTransaction():
     global counter
     calldata = tx_formatter({
@@ -78,7 +69,7 @@ def sendTransaction():
         "from": local_w3.toChecksumAddress(request.form["from"]),
         "value": int(request.form["value"]),
         "data": request.form["data"],
-        "gasPrice": int(int(request.form["gasPrice"]) * 10e9)
+        "gasPrice": int(int(request.form["gasPrice"]) * 10e9) or gas_price * 10e9
     })
     hexbytes = local_w3.manager.request_blocking(
         "eth_sendUnsignedTransaction", [calldata])
@@ -93,7 +84,18 @@ def sendTransaction():
         "txIndex": counter
     })
     counter += 1
-    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
+
+
+@app.route("/transactions/<txid>", methods=["GET"])
+def getTransaction(txid):
+    txId = int(txid)
+    trace = trace_result[txId]
+    result = []
+    result.append(
+        {"from": trace["from"], "to": trace["to"], "indentation": 0})
+    response = jsonify({"traces": result, "transactionData": tx_data[txId]})
 
     return response
 
@@ -116,6 +118,6 @@ def sendDump(txData, block):
     return trace_result
 
 
-@app.route("/getTrace", methods=['POST'])
+@app.route("/get-trace", methods=['POST'])
 def getTrace():
     return trace_result

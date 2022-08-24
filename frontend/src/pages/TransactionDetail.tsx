@@ -8,13 +8,15 @@ import { TransactionResultProp } from "../components/Transaction";
 
 export default function TransactionDetail() {
   const { transactionId } = useParams();
-  const [trace, setTrace] = useState();
+  const [traces, setTraces] = useState();
+  const [transactionData, setTransactionData] = useState();
 
   useEffect(() => {
     axios
-      .get(process.env.REACT_APP_SERVER_URL + "/getTx/" + transactionId)
+      .get(process.env.REACT_APP_SERVER_URL + "/transactions/" + transactionId)
       .then((response) => {
-        setTrace(response.data);
+        console.log(response.data);
+        setTrace(response.data.traces);
       });
   }, [transactionId]);
   const txnResult: TransactionResultProp = {

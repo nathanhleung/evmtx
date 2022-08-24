@@ -1,8 +1,8 @@
-import { FaGithub } from "react-icons/fa"
-import { Route, Link as RouterLink, Routes } from "react-router-dom"
-import { Box, Flex, Heading, Icon, Link, Text } from "@chakra-ui/react"
-import { ConnectionBadge } from "./components"
-import { Dashboard, NewTransaction, TransactionDetail } from "./pages"
+import { FaGithub } from "react-icons/fa";
+import { Route, Link as RouterLink, Routes } from "react-router-dom";
+import { Box, Flex, Heading, Icon, Link, Text } from "@chakra-ui/react";
+import { ConnectionBadge } from "./components";
+import { Dashboard, NewTransaction, TransactionDetail } from "./pages";
 
 export default function App() {
   return (
@@ -30,14 +30,14 @@ export default function App() {
         <Box paddingY={[10, 15, 20]}>
           <Routes>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/transaction/new" element={<NewTransaction />} />
+            <Route path="/transactions/new" element={<NewTransaction />} />
             <Route
-              path="/transaction/:transactionId"
+              path="/transactions/:transactionId"
               element={<TransactionDetail />}
             />
           </Routes>
         </Box>
       </Box>
     </div>
-  )
+  );
 }
