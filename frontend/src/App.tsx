@@ -1,17 +1,13 @@
-import { FaGithub } from "react-icons/fa";
-import { Route, Link as RouterLink, Routes } from "react-router-dom";
-import { Box, Flex, Heading, Icon, Link, Text } from "@chakra-ui/react";
-import { ConnectionBadge } from "./components";
-import { About, Dashboard, NewTransaction, TransactionDetail } from "./pages";
+import { FaGithub } from "react-icons/fa"
+import { Route, Link as RouterLink, Routes } from "react-router-dom"
+import { Box, Flex, Heading, Icon, Link, Text } from "@chakra-ui/react"
+import { ConnectionBadge } from "./components"
+import { About, Dashboard, NewTransaction, TransactionDetail } from "./pages"
 
 export default function App() {
   return (
     <div className="text-black bg-[#FFFFFF] min-h-screen">
-      <Box
-        maxWidth={["100%", "80%", "60%"]}
-        margin="0 auto"
-        paddingY={[10, 15, 20]}
-      >
+      <Box maxWidth={["100%", "80%"]} margin="0 auto" paddingY={[10, 15, 20]}>
         <Flex justifyContent="space-between" alignItems="center" mb={2}>
           <Flex alignItems="center">
             <RouterLink to="/">
@@ -23,9 +19,7 @@ export default function App() {
             <Icon as={FaGithub} boxSize={8} />
           </Link>
         </Flex>
-        <Text color="gray.500">
-          Trace Ethereum transactions on the web using Foundry
-        </Text>
+        <Text color="gray.500">Trace Ethereum transactions using Foundry</Text>
 
         <Box paddingY={[10, 15, 20]}>
           <Routes>
@@ -40,5 +34,5 @@ export default function App() {
         </Box>
       </Box>
     </div>
-  );
+  )
 }
