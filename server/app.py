@@ -16,6 +16,7 @@ CORS(app)
 anvil_rpc_url = os.environ['ANVIL_RPC_URL']
 block_number = os.environ["BLOCK_NUMBER"]
 debug_rpc_url = os.environ['DEBUG_RPC_URL']
+os.environ['ETHERSCAN_API_KEY'] = "EJ3GF1MIGIS615UFJCPKBEIWNGY8W5CQTI"
 etherscan_api_key = os.environ['ETHERSCAN_API_KEY']
 frontend_url = os.environ['FRONTEND_URL']
 
@@ -198,9 +199,9 @@ def getTrace():
 
 @app.route("/contracts/<contract_address>", methods=['GET'])
 def getContractAbi(contract_address):
+    print(etherscan_api_key)
     r = requests.get(url='https://api.etherscan.io/api' +
                      '?module=contract&action=getabi' +
                      '&address=' + contract_address +
                      '&apikey=' + etherscan_api_key)
-    print(r)
-    return "hello"
+    return json.loads(r.text)["result"]

@@ -1,46 +1,53 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Box } from "@chakra-ui/react";
-import { Transaction } from "../components/";
-import { TransactionResultProp } from "../components/Transaction";
+import { Box, Button, Code } from "@chakra-ui/react";
+import { Trace } from "../components/";
 
-type Trace = {
-  from: string;
-  to: string;
-  username: string;
-  identation: number;
-};
-
-type Txn = {
-  data: string;
-  gasPrice: string;
-  value: string;
+const MOCK_TRACE = {
+  from: "0x4a8631e84dd2e5e31100bf4502fea598626906ee",
+  to: "0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45",
+  identation: 0,
+  status: false,
+  calldata:
+    "0x5ae401dc000000000000000000000000000000000000000000000000000000006274dd5f00000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000e404e45aaf000000000000000000000000b4fbf271143f4fbf7b91a5ded31805e42b2208d60000000000000000000000009225aee0523a202c09a76d987f9d57c43afd12b70000000000000000000000000000000000000000000000000000000000000bb8000000000000000000000000e46757a6b124d351c82cd8873b42eda5efad16be000000000000000000000000000000000000000000000000016345785d8a000000000000000000000000000000000000000000000000000023dba36a58b58df9000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  subcalls: [
+    {
+      from: "0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45",
+      to: "0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45",
+      status: false,
+      calldata:
+        "0x04e45aaf000000000000000000000000b4fbf271143f4fbf7b91a5ded31805e42b2208d60000000000000000000000009225aee0523a202c09a76d987f9d57c43afd12b70000000000000000000000000000000000000000000000000000000000000bb8000000000000000000000000e46757a6b124d351c82cd8873b42eda5efad16be000000000000000000000000000000000000000000000000016345785d8a000000000000000000000000000000000000000000000000000023dba36a58b58df90000000000000000000000000000000000000000000000000000000000000000",
+    },
+  ],
 };
 
 export default function TransactionDetail() {
   const { transactionId } = useParams();
-  const [traces, setTraces] = useState<Trace[]>([] as Trace[]);
-  const [traceResult, setTraceResult] = useState<any>();
-  const [txn, setTxn] = useState<Txn>({} as Txn);
+  const [viewRaw, setViewRaw] = useState(false);
+  const trace = MOCK_TRACE;
 
   useEffect(() => {
     axios
       .get(process.env.REACT_APP_SERVER_URL + "/transactions/" + transactionId)
       .then((response) => {
-        const data = response.data;
-        const traces = data.traces;
-        setTraces([traces]);
-        setTxn(traces.transactionData);
-        setTraceResult(JSON.parse(traces.traceResults));
+        console.log(response);
       });
   }, [transactionId]);
 
   return (
     <div>
-      <pre style={{ whiteSpace: "normal" }}>
-        {JSON.stringify(traceResult, null, 4)}
-      </pre>
+      <Box mb={8}>
+        <Trace trace={trace} showTableHeaders />
+      </Box>
+      <Button onClick={() => setViewRaw(!viewRaw)} colorScheme="blue">
+        {viewRaw ? "Hide Raw Trace" : "View Raw Trace"}
+      </Button>
+      {viewRaw && (
+        <Code display="block" whiteSpace="pre" overflowX="scroll" mt={4} p={4}>
+          {JSON.stringify(trace, null, 2)}
+        </Code>
+      )}
     </div>
   );
 }
