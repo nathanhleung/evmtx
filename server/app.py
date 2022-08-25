@@ -134,19 +134,30 @@ def sendTransaction():
 # Gets the trace of the given transaction
 def getTransaction(transaction_id):
     txId = int(transaction_id)
+    if txId not in trace_result:
+        return abort(404)
+
     trace = trace_result[txId]
-    result = []
+    result = {
+        "traceResults": Web3.toJSON(trace),
+        "data": tx_data[txId],
+        "from": trace["from"],
+        "to": trace["to"],
+        "indentation": 0,
+    }
+
     try:
-        decoded_calldata = decode_function_data(HexBytes(trace["data"]))
-        result.append(
-            {"from": trace["from"], "to": trace["to"], "functionName": decoded_calldata[0], "functionArgs": decoded_calldata[1],  "indentation": 0})
+        decoded_calldata = decode_function_data(HexBytes(trace["input"]))
+        result = {**result,
+                  "functionName": decoded_calldata[0],
+                  "functionArgs": decoded_calldata[1]}
         response = jsonify(
-            {"traces": result, "transactionData": tx_data[txId]})
-    except ValueError:
-        result.append(
-            {"from": trace["from"], "to": trace["to"], "data": trace["data"],  "indentation": 0})
+            {"traces": result})
+    except ValueError as e:
+        print(e)
         response = jsonify(
-            {"traces": result, "transactionData": tx_data[txId]})
+            {"traces": result})
+
     return response
 
 
@@ -172,7 +183,6 @@ def sendDump(txData, block):
             "stateOverrides": dump,
             "tracer": "callTracer"
         }])
-    print(trace_result)
     return trace_result
 
 
