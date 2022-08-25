@@ -68,9 +68,6 @@ export default function TransactionDetail() {
           inputData={result.inputData}
         />
       ))}
-      <Box mt={4}>
-        <pre>{JSON.stringify(traces, null, 2)}</pre>
-      </Box>
     </div>
   )
 }
