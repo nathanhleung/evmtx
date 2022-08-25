@@ -13,7 +13,8 @@ server:
 	cd server && python3 -m flask run --port 9000
 
 cli:
-	cd cli && python3 main.py --rpc-url http://142.132.152.124:8546
+	cd cli && python3 main.py --rpc-url http://142.132.152.124:8546 \
+		--etherscan-api-key $ETHERSCAN_API_KEY
 
 anvil:
 	git submodule update --remote --init --merge && \

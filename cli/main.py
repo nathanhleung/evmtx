@@ -48,18 +48,26 @@ parser.add_argument(
     required=True
 )
 
+parser.add_argument(
+    '--etherscan-api-key',
+    metavar='etherscan_api_key',
+    type=str,
+    help='an Etherscan API key to get verified contract ABIs',
+    required=True
+)
+
 args = parser.parse_args()
 
 frontend_port = args.frontend_port or 3000
 backend_port = args.backend_port or 9000
 block_number = args.block_number or 6500000
 rpc_url = args.rpc_url
+etherscan_api_key = args.etherscan_api_key
 
 print("Running frontend on port " + str(frontend_port))
 print("Running backend on port " + str(backend_port))
 print("Forking chain from block " + str(block_number))
 print("Using RPC at " + rpc_url)
-print()
 
 
 environment = os.environ.copy()
@@ -67,6 +75,7 @@ environment["ANVIL_RPC_URL"] = "http://localhost:8545"
 environment["BLOCK_NUMBER"] = str(block_number)
 environment["DEBUG_RPC_URL"] = rpc_url
 environment["FRONTEND_URL"] = "http://localhost:" + str(frontend_port)
+environment["ETHERSCAN_API_KEY"] = etherscan_api_key
 
 processes = [
     Popen([
@@ -87,7 +96,7 @@ processes = [
         str(frontend_port),
     ]),
     Popen([
-        os.getcwd() + "/../foundry/target/debug/anvil", # hardcode this for now
+        os.getcwd() + "/../foundry/target/debug/anvil",  # hardcode this for now
         "--fork-url",
         rpc_url,
         "--fork-block-number",

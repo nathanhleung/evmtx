@@ -1,9 +1,11 @@
-from flask import Flask, jsonify, redirect, request, Response
+import sys
+from flask import Flask, jsonify, redirect, request, Response, abort
 from flask_cors import CORS
 
 from web3 import Web3
 import web3
 import web3.auto.gethdev as GethDev
+import requests
 import os
 from util import tx_formatter
 from web3._utils.method_formatters import to_hex_if_integer
@@ -14,7 +16,28 @@ CORS(app)
 anvil_rpc_url = os.environ['ANVIL_RPC_URL']
 block_number = os.environ["BLOCK_NUMBER"]
 debug_rpc_url = os.environ['DEBUG_RPC_URL']
+etherscan_api_key = os.environ['ETHERSCAN_API_KEY']
 frontend_url = os.environ['FRONTEND_URL']
+
+if anvil_rpc_url is None:
+    print("Please provide the ANVIL_RPC_URL environment variable!")
+    sys.exit(1)
+
+if block_number is None:
+    print("Please provide the BLOCK_NUMBER environment variable!")
+    sys.exit(1)
+
+if debug_rpc_url is None:
+    print("Please provide the DEBUG_RPC_URL environment variable!")
+    sys.exit(1)
+
+if etherscan_api_key is None:
+    print("Please provide the ETHERSCAN_API_KEY environment variable!")
+    sys.exit(1)
+
+if frontend_url is None:
+    print("Please provide the FRONTEND_URL environment variable!")
+    sys.exit(1)
 
 local_w3 = Web3(Web3.HTTPProvider(anvil_rpc_url))
 local_w3.middleware_onion.inject(
@@ -77,7 +100,7 @@ def sendTransaction():
             "from": local_w3.toChecksumAddress(request.form["from"]),
             "value": int(request.form["value"]),
             "data": request.form["data"],
-            "gasPrice": int(int(request.form["gasPrice"]) * 10e9) or gas_price * 10e9
+            "gasPrice": int(float(request.form["gasPrice"]) * 10e9) or gas_price * 10e9
         })
     except Exception as e:
         print(e)
@@ -100,6 +123,7 @@ def sendTransaction():
     response = jsonify({
         "return": hexbytes,
         "traceResults": Web3.toJSON(traceResults),
+        "txData": Web3.toJSON(tx_data),
         "txIndex": counter
     })
     counter += 1
@@ -107,9 +131,10 @@ def sendTransaction():
     return response
 
 
-@app.route("/transactions/<txid>", methods=["GET"])
-def getTransaction(txid):
-    txId = int(txid)
+@app.route("/transactions/<transaction_id>", methods=["GET"])
+# Gets the trace of the given transaction
+def getTransaction(transaction_id):
+    txId = int(transaction_id)
     trace = trace_result[txId]
     result = []
     result.append(
@@ -117,6 +142,16 @@ def getTransaction(txid):
     response = jsonify({"traces": result, "transactionData": tx_data[txId]})
 
     return response
+
+
+@app.route("/raw-transactions/<transaction_hash>", methods=["GET"])
+# Gets raw transaction data for a given transaction
+def getRawTransaction(transaction_hash):
+    try:
+        transaction = local_w3.eth.getTransaction(transaction_hash)
+    except web3.exceptions.TransactionNotFound:
+        return abort(404)
+    return Response(Web3.toJSON(transaction), mimetype="application/json")
 
 
 def sendDump(txData, block):
@@ -140,3 +175,13 @@ def sendDump(txData, block):
 @app.route("/get-trace", methods=['POST'])
 def getTrace():
     return trace_result
+
+
+@app.route("/contracts/<contract_address>", methods=['GET'])
+def getContractAbi(contract_address):
+    r = requests.get(url='https://api.etherscan.io/api' +
+                     '?module=contract&action=getabi' +
+                     '&address=' + contract_address +
+                     '&apikey=' + etherscan_api_key)
+    print(r)
+    return "hello"
