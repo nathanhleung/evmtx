@@ -57,6 +57,7 @@ counter = 0
 
 tx_data = {}
 trace_result = {}
+tx_hash = {}
 
 
 @app.route("/")
@@ -106,11 +107,9 @@ def sendTransaction():
         print(e)
         # 400 because this should only fail if the input is bad
         return repr(e), 400
-
     try:
-        hexbytes = local_w3.manager.request_blocking(
+        hash = local_w3.manager.request_blocking(
             "eth_sendUnsignedTransaction", [calldata])
-
         traceResults = sendDump(calldata, int(os.getenv("BLOCK_NUMBER")))
     except Exception as e:
         print(e)
@@ -119,9 +118,9 @@ def sendTransaction():
 
     trace_result[counter] = traceResults
     tx_data[counter] = calldata
-
+    tx_hash[counter] = hash
     response = jsonify({
-        "return": hexbytes,
+        "txHash": hash,
         "traceResults": Web3.toJSON(traceResults),
         "txData": Web3.toJSON(tx_data),
         "txIndex": counter
