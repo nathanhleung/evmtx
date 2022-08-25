@@ -4,8 +4,8 @@ export type TransactionResultProp = {
   exeStatus: boolean
   from: string
   to: string
-  gasPrice: number
-  value: number
+  gasPrice: string
+  value: string
   transactionFee: number
   maxPriorityFeePerGas: number
   maxFeePerGas: number

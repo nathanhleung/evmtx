@@ -14,10 +14,16 @@ type Trace = {
   identation: number;
 };
 
+type Txn = {
+  data: string;
+  gasPrice: string;
+  value: string;
+}
+
 export default function TransactionDetail() {
   const { transactionId } = useParams();
   const [traces, setTraces] = useState<Trace[]>([] as Trace[]);
-  const [transactionData, setTransactionData] = useState();
+  const [txn, setTxn] = useState<Txn>({} as Txn);
 
   useEffect(() => {
     axios
@@ -25,20 +31,22 @@ export default function TransactionDetail() {
       .then((response) => {
         console.log(response.data);
         setTraces(response.data.traces);
+        setTxn(response.data.transactionData)
         console.log(traces)
+        // use txn data stuff
       });
   }, [transactionId]);
     const txnResults: TransactionResultProp[] = traces.map(trace => ( {
       exeStatus: true,
       from: trace.from,
       to: trace.to,
-      gasPrice: 0,
-      value: 0,
+      gasPrice: txn.gasPrice,
+      value: txn.value,
       maxPriorityFeePerGas: 0,
       maxFeePerGas: 0,
       gasLimit: 0,
       gasUsage: 0,
-      inputData: "",
+      inputData: txn.data,
       transactionFee: 0,
     } as TransactionResultProp));
 
@@ -52,7 +60,7 @@ export default function TransactionDetail() {
           to={result.to}
           gasPrice={result.gasPrice}
           value={result.value}
-          transactionFee={result.gasPrice * result.gasUsage}
+          transactionFee={parseInt(result.gasPrice, 16) * result.gasUsage}
           maxPriorityFeePerGas={result.maxPriorityFeePerGas}
           maxFeePerGas={result.maxFeePerGas}
           gasUsage={result.gasUsage}
