@@ -1,15 +1,15 @@
 import sys
 from flask import Flask, jsonify, redirect, request, Response, abort
 from flask_cors import CORS
-
+from hexbytes import HexBytes
 from web3 import Web3
 import web3
-import web3.auto.gethdev as GethDev
 import requests
 import os
-from util import tx_formatter
+from util import tx_formatter, decode_function_data
 from web3._utils.method_formatters import to_hex_if_integer
 import json
+
 app = Flask(__name__)
 CORS(app)
 
@@ -136,10 +136,17 @@ def getTransaction(transaction_id):
     txId = int(transaction_id)
     trace = trace_result[txId]
     result = []
-    result.append(
-        {"from": trace["from"], "to": trace["to"], "indentation": 0})
-    response = jsonify({"traces": result, "transactionData": tx_data[txId]})
-
+    try:
+        decoded_calldata = decode_function_data(HexBytes(trace["data"]))
+        result.append(
+            {"from": trace["from"], "to": trace["to"], "functionName": decoded_calldata[0], "functionArgs": decoded_calldata[1],  "indentation": 0})
+        response = jsonify(
+            {"traces": result, "transactionData": tx_data[txId]})
+    except ValueError:
+        result.append(
+            {"from": trace["from"], "to": trace["to"], "data": trace["data"],  "indentation": 0})
+        response = jsonify(
+            {"traces": result, "transactionData": tx_data[txId]})
     return response
 
 
@@ -159,15 +166,13 @@ def sendDump(txData, block):
     for addr, state in dump.items():
         state["nonce"] = to_hex_if_integer(state["nonce"])
         dump[addr] = state
-    # tracer = ""
-    # with open('/Users/haowang/coding/fip/server/tracer.txt') as f:
-    #     tracer = f.readlines()
     trace_result = debug_w3.manager.request_blocking(
         "debug_traceCall",
         [txData, to_hex_if_integer(block), {
             "stateOverrides": dump,
             "tracer": "callTracer"
         }])
+    print(trace_result)
     return trace_result
 
 
