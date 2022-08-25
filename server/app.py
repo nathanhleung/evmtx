@@ -16,6 +16,7 @@ CORS(app)
 anvil_rpc_url = os.environ['ANVIL_RPC_URL']
 block_number = os.environ["BLOCK_NUMBER"]
 debug_rpc_url = os.environ['DEBUG_RPC_URL']
+os.environ['ETHERSCAN_API_KEY'] = "EJ3GF1MIGIS615UFJCPKBEIWNGY8W5CQTI"
 etherscan_api_key = os.environ['ETHERSCAN_API_KEY']
 frontend_url = os.environ['FRONTEND_URL']
 
@@ -141,6 +142,7 @@ def trace_format(trace, identation_level=0):
         decoded_calldata = decode_function_data(HexBytes(trace["input"]))
         result["functionName"] = decoded_calldata[0]
         result["functionArgs"] = decoded_calldata[1]
+        result["functionArgs"] = [ str(arg) for arg in result["functionArgs"]]
         result["calldata"] = trace["input"]
     except ValueError:
         result["calldata"] = trace["input"]
@@ -161,7 +163,7 @@ def getTransaction(transaction_id):
 
     trace = trace_result[txId]
     formatted_traces = trace_format(trace)
-    response = jsonify({"results": formatted_traces})
+    response = jsonify({"results": Web3.toJSON(formatted_traces)})
     print(formatted_traces)
     return response
 
@@ -198,9 +200,9 @@ def getTrace():
 
 @app.route("/contracts/<contract_address>", methods=['GET'])
 def getContractAbi(contract_address):
+    print(etherscan_api_key)
     r = requests.get(url='https://api.etherscan.io/api' +
                      '?module=contract&action=getabi' +
                      '&address=' + contract_address +
                      '&apikey=' + etherscan_api_key)
-    print(r)
-    return "hello"
+    return json.loads(r.text)["result"]
