@@ -130,6 +130,28 @@ def sendTransaction():
     return response
 
 
+def trace_format(trace, identation_level=0):
+    result = {
+        "from": trace["from"],
+        "to": trace["to"],
+        "identation": identation_level,
+        "status": False if "error" in trace else False
+    }
+    try:
+        decoded_calldata = decode_function_data(HexBytes(trace["input"]))
+        result["functionName"] = decoded_calldata[0]
+        result["functionArgs"] = decoded_calldata[1]
+        result["calldata"] = trace["input"]
+    except ValueError:
+        result["calldata"] = trace["input"]
+    if "calls" in trace:
+        result["subcalls"] = []
+        for subtrace in trace["calls"]:
+            result["subcalls"].append(
+                trace_format(subtrace, identation_level + 1))
+    return result
+
+
 @app.route("/transactions/<transaction_id>", methods=["GET"])
 # Gets the trace of the given transaction
 def getTransaction(transaction_id):
@@ -138,26 +160,9 @@ def getTransaction(transaction_id):
         return abort(404)
 
     trace = trace_result[txId]
-    result = {
-        "traceResults": Web3.toJSON(trace),
-        "data": tx_data[txId],
-        "from": trace["from"],
-        "to": trace["to"],
-        "indentation": 0,
-    }
-
-    try:
-        decoded_calldata = decode_function_data(HexBytes(trace["input"]))
-        result = {**result,
-                  "functionName": decoded_calldata[0],
-                  "functionArgs": decoded_calldata[1]}
-        response = jsonify(
-            {"traces": result})
-    except ValueError as e:
-        print(e)
-        response = jsonify(
-            {"traces": result})
-
+    formatted_traces = trace_format(trace)
+    response = jsonify({"results": formatted_traces})
+    print(formatted_traces)
     return response
 
 
