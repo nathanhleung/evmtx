@@ -1,5 +1,4 @@
-from itertools import count
-from flask import Flask, jsonify, redirect, request
+from flask import Flask, jsonify, redirect, request, Response
 from flask_cors import CORS
 
 from web3 import Web3
@@ -64,17 +63,29 @@ def allTransactions():
 @app.route("/transactions/new", methods=['POST'])
 def sendTransaction():
     global counter
-    calldata = tx_formatter({
-        "to": local_w3.toChecksumAddress(request.form["to"]),
-        "from": local_w3.toChecksumAddress(request.form["from"]),
-        "value": int(request.form["value"]),
-        "data": request.form["data"],
-        "gasPrice": int(int(request.form["gasPrice"]) * 10e9) or gas_price * 10e9
-    })
-    hexbytes = local_w3.manager.request_blocking(
-        "eth_sendUnsignedTransaction", [calldata])
+    try:
+        calldata = tx_formatter({
+            "to": local_w3.toChecksumAddress(request.form["to"]),
+            "from": local_w3.toChecksumAddress(request.form["from"]),
+            "value": int(request.form["value"]),
+            "data": request.form["data"],
+            "gasPrice": int(int(request.form["gasPrice"]) * 10e9) or gas_price * 10e9
+        })
+    except Exception as e:
+        print(e)
+        # 400 because this should only fail if the input is bad
+        return repr(e), 400
 
-    traceResults = sendDump(calldata, int(os.getenv("BLOCK_NUMBER")))
+    try:
+        hexbytes = local_w3.manager.request_blocking(
+            "eth_sendUnsignedTransaction", [calldata])
+
+        traceResults = sendDump(calldata, int(os.getenv("BLOCK_NUMBER")))
+    except Exception as e:
+        print(e)
+        # 500 because this probably indicates a problem with Anvil
+        return repr(e), 500
+
     trace_result[counter] = traceResults
     tx_data[counter] = calldata
 

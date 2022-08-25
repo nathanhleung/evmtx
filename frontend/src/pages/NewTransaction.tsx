@@ -3,13 +3,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
-  Flex,
   FormControl,
   FormLabel,
   HStack,
   Input,
+  Text,
   Textarea,
-  VStack
+  VStack,
 } from "@chakra-ui/react";
 
 export default function NewTransaction() {
@@ -19,6 +19,7 @@ export default function NewTransaction() {
     "0x0000000000000000000000000000000000000000"
   );
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [fromAddress, setFromAddress] = useState(
     "0x0000000000000000000000000000000000000000"
   );
@@ -40,6 +41,7 @@ export default function NewTransaction() {
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
     const data = new FormData();
     data.append("to", toAddress);
     data.append("value", value);
@@ -57,6 +59,7 @@ export default function NewTransaction() {
       navigate(`/transactions/${result.data.txIndex}`);
     } catch (e) {
       console.error(e);
+      setError((e as any)?.response?.data);
     } finally {
       setLoading(false);
     }
@@ -68,29 +71,29 @@ export default function NewTransaction() {
     >
       <form onSubmit={handleSubmit}>
         <VStack align="left">
-        <HStack spacing={4}>
-          <FormControl className="py-2">
-            <FormLabel>From Address</FormLabel>
-            <Input
-              background="white"
-              color="black"
-              value={fromAddress}
-              placeholder="From Address"
-              onChange={(e) => setFromAddress(e.target.value)}
-              type="string"
-            />
-          </FormControl>
-          <FormControl className="py-2">
-            <FormLabel>To Address</FormLabel>
-            <Input
-              background="white"
-              color="black"
-              value={toAddress}
-              placeholder="To address"
-              onChange={(e) => setToAddress(e.target.value)}
-            />
-          </FormControl>
-        </HStack>
+          <HStack spacing={4}>
+            <FormControl className="py-2">
+              <FormLabel>From Address</FormLabel>
+              <Input
+                background="white"
+                color="black"
+                value={fromAddress}
+                placeholder="From Address"
+                onChange={(e) => setFromAddress(e.target.value)}
+                type="string"
+              />
+            </FormControl>
+            <FormControl className="py-2">
+              <FormLabel>To Address</FormLabel>
+              <Input
+                background="white"
+                color="black"
+                value={toAddress}
+                placeholder="To address"
+                onChange={(e) => setToAddress(e.target.value)}
+              />
+            </FormControl>
+          </HStack>
           <FormControl flex={1}>
             <FormLabel>Value</FormLabel>
             <Input
@@ -124,23 +127,26 @@ export default function NewTransaction() {
               type="number"
             />
           </FormControl> */}
-        <FormControl>
-          <FormLabel>Transaction Hex Data</FormLabel>
-          <Textarea
-            background="white"
-            color="black"
-            className="rounded-lg"
-            placeholder="Transaction Hex Data"
-            value={transactionData}
-            onChange={(e) => setTransactionData(e.target.value)}
-            style={{ width: "100%" }}
-            rows={10}
-          />
-        </FormControl>
+          <FormControl>
+            <FormLabel>Transaction Hex Data</FormLabel>
+            <Textarea
+              background="white"
+              color="black"
+              className="rounded-lg"
+              placeholder="Transaction Hex Data"
+              value={transactionData}
+              onChange={(e) => setTransactionData(e.target.value)}
+              style={{ width: "100%" }}
+              rows={10}
+            />
+          </FormControl>
         </VStack>
         <Button type="submit" disabled={loading} colorScheme="green" mt={4}>
           {loading ? "Tracing..." : "Trace"}
         </Button>
+        <Text color="red" mt={4}>
+          {error}
+        </Text>
       </form>
     </div>
   );
