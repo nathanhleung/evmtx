@@ -3,9 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Box } from "@chakra-ui/react";
 import { TraceBoard, Transaction } from "../components/";
-import { TraceProps } from "../components/Trace";
 import { TransactionResultProp } from "../components/Transaction";
-import { collapseTextChangeRangesAcrossMultipleVersions, textChangeRangeIsUnchanged } from "typescript";
 
 type Trace = {
   from: string;
@@ -18,7 +16,7 @@ type Txn = {
   data: string;
   gasPrice: string;
   value: string;
-}
+};
 
 export default function TransactionDetail() {
   const { transactionId } = useParams();
@@ -31,29 +29,32 @@ export default function TransactionDetail() {
       .then((response) => {
         console.log(response.data);
         setTraces(response.data.traces);
-        setTxn(response.data.transactionData)
-        console.log(traces)
+        setTxn(response.data.transactionData);
+        console.log(traces);
         // use txn data stuff
       });
   }, [transactionId]);
-    const txnResults: TransactionResultProp[] = traces.map(trace => ( {
-      exeStatus: true,
-      from: trace.from,
-      to: trace.to,
-      gasPrice: txn.gasPrice,
-      value: txn.value,
-      maxPriorityFeePerGas: 0,
-      maxFeePerGas: 0,
-      gasLimit: 0,
-      gasUsage: 0,
-      inputData: txn.data,
-      transactionFee: 0,
-    } as TransactionResultProp));
+  const txnResults: TransactionResultProp[] = traces.map(
+    (trace) =>
+      ({
+        exeStatus: true,
+        from: trace.from,
+        to: trace.to,
+        gasPrice: txn.gasPrice,
+        value: txn.value,
+        maxPriorityFeePerGas: 0,
+        maxFeePerGas: 0,
+        gasLimit: 0,
+        gasUsage: 0,
+        inputData: txn.data,
+        transactionFee: 0,
+      } as TransactionResultProp)
+  );
 
   return (
     <div>
       <TraceBoard traces={traces ?? []} />
-      {txnResults.map(result => 
+      {txnResults.map((result) => (
         <Transaction
           exeStatus={result.exeStatus}
           from={result.from}
@@ -67,8 +68,7 @@ export default function TransactionDetail() {
           gasLimit={result.gasLimit}
           inputData={result.inputData}
         />
-      )
-      }
+      ))}
       <Box mt={4}>
         <pre>{JSON.stringify(traces, null, 2)}</pre>
       </Box>

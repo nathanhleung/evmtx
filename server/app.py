@@ -41,10 +41,18 @@ def index():
     return redirect(frontend_url)
 
 
-@app.route("/connected")
-def connected():
+@app.route("/connection/local")
+def local_connection():
     response = jsonify({"result": "false"})
     if local_w3.isConnected():
+        response = jsonify({"result": "true"})
+    return response
+
+
+@app.route("/connection/remote")
+def remote_connection():
+    response = jsonify({"result": "false"})
+    if debug_w3.isConnected():
         response = jsonify({"result": "true"})
     return response
 
