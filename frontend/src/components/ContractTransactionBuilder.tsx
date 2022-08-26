@@ -47,6 +47,7 @@ export default function ContractFuncts({
       );
       if (Array.isArray(result.data)) {
         setAbi(result.data);
+        console.log(result.data)
       } else {
         setError(result.data);
       }
