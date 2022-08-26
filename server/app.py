@@ -142,7 +142,7 @@ def trace_format(trace, identation_level=0):
         decoded_calldata = decode_function_data(HexBytes(trace["input"]))
         result["functionName"] = decoded_calldata[0]
         result["functionArgs"] = decoded_calldata[1]
-        result["functionArgs"] = [ str(arg) for arg in result["functionArgs"]]
+        result["functionArgs"] = [str(arg) for arg in result["functionArgs"]]
         result["calldata"] = trace["input"]
     except ValueError:
         result["calldata"] = trace["input"]
@@ -190,11 +190,6 @@ def sendDump(txData, block):
             "stateOverrides": dump,
             "tracer": "callTracer"
         }])
-    return trace_result
-
-
-@app.route("/get-trace", methods=['POST'])
-def getTrace():
     return trace_result
 
 
