@@ -1,3 +1,4 @@
+import solcx
 import sys
 from flask import Flask, jsonify, redirect, request, Response, abort
 from flask_cors import CORS
@@ -9,10 +10,6 @@ import os
 from util import tx_formatter, decode_function_data
 from web3._utils.method_formatters import to_hex_if_integer
 import json
-<<<<<<< HEAD
-=======
-import solcx
->>>>>>> d65ae46 (　compiler)
 
 app = Flask(__name__)
 CORS(app)
@@ -214,34 +211,16 @@ def getContractAbi(contract_address):
 def deploy_contract():
     source_code = request.form["source_code"]
     compiler_version = request.form["compiler_version"]
-<<<<<<< HEAD
-    deploy_bytescode = compile_contract(source_code, compiler_version)
-    local_w3.eth.send_raw_transaction({})
-
-
-def compile_contract(source_code: str, compiler_version: str) -> HexBytes:
-    # compile contracts return the deploy bytecode
-    compiler_input = {
-        "language": "Solidity",
-        "settings": {
-
-        },
-        "sources": {
-
-        }
-    }
-
-    solcx.compile_standard(compiler_input)
-=======
     contract_name = request.form["contract_name"]
-    deploy_bytescode = compile_contract(source_code, compiler_version,contract_name)
+    deploy_bytescode = compile_contract(
+        source_code, compiler_version, contract_name)
     calldata = tx_formatter({
-            "from": local_w3.toChecksumAddress(request.form["from"]),
-            "data": deploy_bytescode,
-            "gasPrice": int(float(request.form["gasPrice"]) * 10e9) or gas_price * 10e9
-        })
+        "from": local_w3.toChecksumAddress(request.form["from"]),
+        "data": deploy_bytescode,
+        "gasPrice": int(float(request.form["gasPrice"]) * 10e9) or gas_price * 10e9
+    })
     local_w3.manager.request_blocking(
-            "eth_sendUnsignedTransaction", [calldata])
+        "eth_sendUnsignedTransaction", [calldata])
 
 
 def compile_contract(source_code: str, compiler_version: str, contract_name: str) -> HexBytes:
@@ -259,9 +238,8 @@ def compile_contract(source_code: str, compiler_version: str, contract_name: str
         }
     }
 
-    compiler_output = solcx.compile_standard(compiler_input,solc_version=compiler_version)
+    compiler_output = solcx.compile_standard(
+        compiler_input, solc_version=compiler_version)
     parsedOutput = json.parse(compiler_output)
     deploy_bytecode = parsedOutput["contracts"][contract_name]["bytecode"]["object"]
     return deploy_bytecode
-
->>>>>>> d65ae46 (　compiler)
