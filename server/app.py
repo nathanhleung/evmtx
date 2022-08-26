@@ -1,3 +1,5 @@
+from semantic_version.base import Version
+from solcx.exceptions import SolcError
 import solcx
 import sys
 from flask import Flask, jsonify, redirect, request, Response, abort
@@ -209,21 +211,30 @@ def getContractAbi(contract_address):
 
 @app.route("/deployContracts", methods=["POST"])
 def deploy_contract():
+    calldata = tx_formatter({
+        "from": local_w3.toChecksumAddress(request.form["from"]),
+        "data": request.form["deployBytecode"],
+        "gasPrice": int(float(request.form["gasPrice"]) * 10e9) or gas_price * 10e9
+    })
+    deploy_hash = local_w3.manager.request_blocking(
+        "eth_sendUnsignedTransaction", [calldata])
+    return jsonify({"status": True, "hash": deploy_hash})
+
+
+@app.route("/compileContract", methods=["POST"])
+def compile_contract():
     source_code = request.form["source_code"]
     compiler_version = request.form["compiler_version"]
     contract_name = request.form["contract_name"]
-    deploy_bytescode = compile_contract(
-        source_code, compiler_version, contract_name)
-    calldata = tx_formatter({
-        "from": local_w3.toChecksumAddress(request.form["from"]),
-        "data": deploy_bytescode,
-        "gasPrice": int(float(request.form["gasPrice"]) * 10e9) or gas_price * 10e9
-    })
-    local_w3.manager.request_blocking(
-        "eth_sendUnsignedTransaction", [calldata])
+    try:
+        deploy_bytescode, constructor_abi = compile_contract_helper(
+            source_code, compiler_version, contract_name)
+        return jsonify({"status": True, "ABI": constructor_abi, "deployBytecode": deploy_bytescode})
+    except ValueError:
+        return jsonify({"status": False})
 
 
-def compile_contract(source_code: str, compiler_version: str, contract_name: str) -> HexBytes:
+def compile_contract_helper(source_code: str, compiler_version: str, contract_name: str) -> HexBytes:
     # compile contracts return the deploy bytecode
     compiler_input = {
         # Required: Source code language. Currently supported are "Solidity" and "Yul".
@@ -235,11 +246,30 @@ def compile_contract(source_code: str, compiler_version: str, contract_name: str
                 # Required (unless "urls" is used): literal contents of the source file
                 "content": source_code
             }
+        },
+        "settings": {
+                "outputSelection": {
+                    "*": {
+                        "*": [
+                            "abi", "evm.bytecode", "evm.bytecode.sourceMap"
+                        ],
+                    }
+                }
         }
     }
-
-    compiler_output = solcx.compile_standard(
-        compiler_input, solc_version=compiler_version)
-    parsedOutput = json.parse(compiler_output)
-    deploy_bytecode = parsedOutput["contracts"][contract_name]["bytecode"]["object"]
-    return deploy_bytecode
+    try:
+        installed_versions = solcx.get_installed_solc_versions()
+        if Version(compiler_version) not in installed_versions:
+            solcx.install_solc(compiler_version)
+        compiler_output = solcx.compile_standard(
+            compiler_input, solc_version=compiler_version)
+        if 'errors' in compiler_output:
+            raise ValueError("Could not compile the source code")
+        deploy_bytecode = compiler_output["contracts"]["File.sol"][contract_name]["evm"]["bytecode"]["object"]
+        abis = compiler_output["contracts"]["File.sol"][contract_name]["abi"]
+        for abi in abis:
+            if abi["type"] == "constructor":
+                return (deploy_bytecode, abi["inputs"])
+        return (deploy_bytecode, [])
+    except (ValueError, SolcError):
+        raise ValueError("Could not compile the source code")
