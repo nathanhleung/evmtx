@@ -109,9 +109,9 @@ def sendTransaction():
         # 400 because this should only fail if the input is bad
         return repr(e), 400
     try:
+        traceResults = sendDump(calldata, int(os.getenv("BLOCK_NUMBER")))
         hash = local_w3.manager.request_blocking(
             "eth_sendUnsignedTransaction", [calldata])
-        traceResults = sendDump(calldata, int(os.getenv("BLOCK_NUMBER")))
     except Exception as e:
         print(e)
         # 500 because this probably indicates a problem with Anvil
