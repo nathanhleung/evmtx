@@ -167,6 +167,7 @@ def getTransaction(transaction_id):
     print(formatted_traces)
     return response
 
+
 @app.route("/raw-transactions/<transaction_hash>", methods=["GET"])
 # Gets raw transaction data for a given transaction
 def getRawTransaction(transaction_hash):
@@ -194,29 +195,33 @@ def sendDump(txData, block):
 
 @app.route("/contracts/<contract_address>", methods=['GET'])
 def getContractAbi(contract_address):
-    print(etherscan_api_key)
     r = requests.get(url='https://api.etherscan.io/api' +
                      '?module=contract&action=getabi' +
                      '&address=' + contract_address +
                      '&apikey=' + etherscan_api_key)
-    return json.loads(r.text)["result"]
+    return Response(
+        json.loads(r.text)["result"],
+        mimetype="application/json",
+        status=r.status_code
+    )
 
 
-@app.route("/deployContracts", methods= ["POST"])
+@app.route("/deployContracts", methods=["POST"])
 def deploy_contract():
     source_code = request.form["source_code"]
     compiler_version = request.form["compiler_version"]
     deploy_bytescode = compile_contract(source_code, compiler_version)
     local_w3.eth.send_raw_transaction({})
 
-def compile_contract(source_code: str, compiler_version: str) -> HexBytes: 
+
+def compile_contract(source_code: str, compiler_version: str) -> HexBytes:
     # compile contracts return the deploy bytecode
     compiler_input = {
         "language": "Solidity",
-        "settings" : {
+        "settings": {
 
-        }, 
-        "sources":{
+        },
+        "sources": {
 
         }
     }

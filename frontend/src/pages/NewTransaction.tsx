@@ -9,13 +9,11 @@ import {
   HStack,
   Heading,
   Input,
-  InputGroup,
-  InputRightElement,
   Text,
   Textarea,
   VStack,
 } from "@chakra-ui/react";
-import ContractFuncs from "../components/ContractFuncs";
+import { ContractTransactionBuilder } from "../components";
 import { SERVER_URL } from "../config";
 
 export default function NewTransaction() {
@@ -24,7 +22,6 @@ export default function NewTransaction() {
   const [importTransactionError, setImportTransactionError] = useState("");
 
   const [transactionData, setTransactionData] = useState("0x");
-  const [contractAddr, setContractAddr] = useState("");
   const [value, setValue] = useState("");
   const [toAddress, setToAddress] = useState(
     "0x0000000000000000000000000000000000000000"
@@ -200,35 +197,16 @@ export default function NewTransaction() {
               Manually input hex data, or construct a transaction from a
               contract address
             </Text>
-            <Box>
-              <FormControl mt={4}>
-                <FormLabel>Contract Address</FormLabel>
-                <InputGroup>
-                  <Input
-                    background="white"
-                    color="black"
-                    value={contractAddr}
-                    onChange={(e) => setContractAddr(e.target.value)}
-                    type="string"
-                    placeholder="0x"
-                  />
-                  <InputRightElement width="10rem">
-                    <Button
-                      size="sm"
-                      h="1.75rem"
-                      disabled={contractAddr === ""}
-                    >
-                      Import ABI
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-              </FormControl>
-              {contractAddr !== "" && (
-                <ContractFuncs mt={4} addr={contractAddr} />
-              )}
-            </Box>
+            <ContractTransactionBuilder
+              setTransactionData={setTransactionData}
+              mt={4}
+              mb={8}
+            />
+            <Heading size="sm" mb={2}>
+              Transaction Hex Data
+            </Heading>
+            <Text color="gray.500">Manually input, or generate above.</Text>
             <FormControl mt={4}>
-              <FormLabel>Transaction Hex Data</FormLabel>
               <Textarea
                 background="white"
                 color="black"
