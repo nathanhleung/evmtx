@@ -167,7 +167,6 @@ def getTransaction(transaction_id):
     print(formatted_traces)
     return response
 
-
 @app.route("/raw-transactions/<transaction_hash>", methods=["GET"])
 # Gets raw transaction data for a given transaction
 def getRawTransaction(transaction_hash):
@@ -201,3 +200,25 @@ def getContractAbi(contract_address):
                      '&address=' + contract_address +
                      '&apikey=' + etherscan_api_key)
     return json.loads(r.text)["result"]
+
+
+@app.route("/deployContracts", methods= ["POST"])
+def deploy_contract():
+    source_code = request.form["source_code"]
+    compiler_version = request.form["compiler_version"]
+    deploy_bytescode = compile_contract(source_code, compiler_version)
+    local_w3.eth.send_raw_transaction({})
+
+def compile_contract(source_code: str, compiler_version: str) -> HexBytes: 
+    # compile contracts return the deploy bytecode
+    compiler_input = {
+        "language": "Solidity",
+        "settings" : {
+
+        }, 
+        "sources":{
+
+        }
+    }
+
+    solcx.compile_standard(compiler_input)
