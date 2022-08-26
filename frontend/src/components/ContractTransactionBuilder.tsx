@@ -1,5 +1,8 @@
+import { encode } from "punycode";
 import axios from "axios";
 import { ethers } from "ethers";
+import { AbiCoder } from "ethers/lib/utils";
+import { get, padStart, set } from "lodash";
 import { useState } from "react";
 import {
   Box,
@@ -19,7 +22,7 @@ export type ContractFuncProps = BoxProps & {
   setTransactionData(newTransactionData: string): void;
 };
 
-export default function ContractFuncts({
+export default function ContractTransactionBuilder({
   setTransactionData,
   ...restProps
 }: ContractFuncProps) {
@@ -29,9 +32,10 @@ export default function ContractFuncts({
   const [abi, setAbi] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [contractFunctionParams, setContractFunctionParams] = useState<
-    string[]
-  >([]);
+  const [contractFunctionParams, setContractFunctionParams] = useState<any[]>(
+    []
+  );
+  const [encodingError, setEncodingError] = useState("");
 
   const contractFunctions = abi.filter(function (e: any) {
     return e.type === "function";
@@ -49,9 +53,13 @@ export default function ContractFuncts({
         setAbi(result.data);
         console.log(result.data)
       } else {
+        setAbi([]);
+        setSelectedContractFunctionIndex(0);
         setError(result.data);
       }
     } catch (e) {
+      setAbi([]);
+      setSelectedContractFunctionIndex(0);
       console.log(e);
       setError((e as any).toString());
     } finally {
@@ -59,18 +67,83 @@ export default function ContractFuncts({
     }
   }
 
+  function getInputSignature(input: any) {
+    if (input.type === "tuple") {
+      return `(${input.components
+        .map((c: any) => {
+          return getInputSignature(c);
+        })
+        .join(",")})`;
+    }
+    return input.type;
+  }
+
+  function getInputFormControl(input: any, index: number[]) {
+    if (input.type === "tuple") {
+      return input.components.map((component: any, i: number) => {
+        return getInputFormControl(component, [...index, i]);
+      });
+    }
+
+    const isArrayType = input.type.includes("[");
+
+    return (
+      <FormControl mt={4} key={input.name}>
+        <FormLabel color="gray.500">
+          {input.type} {input.name}
+        </FormLabel>
+        <Input
+          value={get(contractFunctionParams, index, "").value}
+          onChange={(e) => {
+            const value = e.target.value;
+            const newContractFunctionParams = set(
+              [...contractFunctionParams],
+              index,
+              { type: input.type, value }
+            );
+            setContractFunctionParams(newContractFunctionParams);
+          }}
+          placeholder={
+            isArrayType
+              ? "Unsupported Parameter Type"
+              : `${input.type} ${input.name}`
+          }
+          background="white"
+          disabled={isArrayType}
+        />
+      </FormControl>
+    );
+  }
+
   function generateCalldata() {
     if (selectedContractFunctionIndex !== undefined) {
       const selectedFunction = contractFunctions[selectedContractFunctionIndex];
       const signature = `${selectedFunction.name}(${selectedFunction.inputs
-        .map((i: any) => i.type)
+        .map((i: any) => getInputSignature(i))
         .join(",")})`;
-      console.log(signature);
-      console.log(selectedFunction);
       const functionSelector = ethers.utils
         .keccak256(ethers.utils.toUtf8Bytes(signature))
         .slice(0, 10);
-      setTransactionData(`Function signature: ${functionSelector}`);
+
+      const flattenedParameters = contractFunctionParams.flat();
+      const abiCoder = new AbiCoder();
+      try {
+        setEncodingError("");
+        const encodedParameters = abiCoder
+          .encode(
+            flattenedParameters.map((it) => it.type),
+            flattenedParameters.map((it) => it.value)
+          )
+          .slice(2);
+
+        setTransactionData(`${functionSelector}${encodedParameters}`);
+        setEncodingError(
+          "Generated calldata! However, this feature is still in beta. Please inspect the generated calldata before tracing."
+        );
+      } catch (e) {
+        console.log(e);
+        setEncodingError((e as any).toString());
+      }
     }
   }
 
@@ -111,9 +184,10 @@ export default function ContractFuncts({
             <Select
               background="white"
               value={selectedContractFunctionIndex}
-              onChange={(e) =>
-                setSelectedContractFunctionIndex(parseInt(e.target.value, 10))
-              }
+              onChange={(e) => {
+                setSelectedContractFunctionIndex(parseInt(e.target.value, 10));
+                setContractFunctionParams([]);
+              }}
             >
               {contractFunctions.map((f: any, i) => (
                 <option
@@ -129,16 +203,15 @@ export default function ContractFuncts({
           </FormControl>
           {selectedContractFunctionIndex !== undefined && (
             <Box>
-              {contractFunctions[selectedContractFunctionIndex].inputs
-                .filter(function (e: any) {
-                  return e.name !== "";
-                })
-                .map((i: any) => (
-                  <FormControl mt={4} key={i.name}>
-                    <FormLabel>{i.name}</FormLabel>
-                    <Input placeholder={i.name} background="white" />
-                  </FormControl>
-                ))}
+              <Box>
+                {contractFunctions[selectedContractFunctionIndex].inputs
+                  .filter(function (e: any) {
+                    return e.name !== "";
+                  })
+                  .map((input: any, index: number) => {
+                    return getInputFormControl(input, [index]);
+                  })}
+              </Box>
               <Button
                 colorScheme="blue"
                 size="sm"
@@ -147,6 +220,11 @@ export default function ContractFuncts({
               >
                 Generate Calldata
               </Button>
+              {encodingError && (
+                <Text color="red.500" mt={2}>
+                  {encodingError}
+                </Text>
+              )}
             </Box>
           )}
         </Box>
