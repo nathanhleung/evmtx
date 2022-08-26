@@ -39,15 +39,15 @@ export default function ConnectionBadge(props: ConnectionBadgeProps) {
       <Link to="/about">
         <Badge colorScheme={localConnection ? "green" : "red"} {...props}>
           {localConnection
-            ? "Connected to Local Web3"
-            : "Not Connected to Local Web3"}
+            ? "Connected to Forked Web3"
+            : "Not Connected to Forked Web3"}
         </Badge>
       </Link>
       <Link to="/about">
         <Badge colorScheme={localConnection ? "green" : "red"} {...props}>
           {localConnection
-            ? "Connected to Remote Web3"
-            : "Not Connected to Remote Web3"}
+            ? "Connected to Full Web3"
+            : "Not Connected to Full Web3"}
         </Badge>
       </Link>
     </>

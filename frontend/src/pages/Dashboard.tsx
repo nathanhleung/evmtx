@@ -69,7 +69,7 @@ export default function Dashboard() {
 
     content = (
       <Box>
-        <Table>
+        <Table background="white">
           <Thead>
             <Tr>
               <Th>ID</Th>
@@ -100,7 +100,7 @@ export default function Dashboard() {
             View an Example
           </Button>
           <Button
-            colorScheme="green"
+            colorScheme="blue"
             onClick={() => navigate("/transactions/new")}
           >
             Try Now
@@ -108,9 +108,26 @@ export default function Dashboard() {
         </HStack>
       </Center>
       <Box mt={24} borderRadius="lg" backgroundColor="gray.100" padding={16}>
-        <Heading size="lg" textAlign="center" mb={12}>
-          All Traced Transactions
-        </Heading>
+        <Center mb={12} flexDirection="column" textAlign="center">
+          <Heading size="lg" mb={4}>
+            All Traced Transactions
+          </Heading>
+          <Text color="gray.500" width={["100%", "80%", "60%"]}>
+            <Text>
+              Free users share a single common blockchain fork, hosted node, and
+              traced transaction list. Blockchain state is reset to the latest
+              block once per day.
+            </Text>
+            <br />
+            <Text>
+              For isolated environments,{" "}
+              <Link color="blue.500" as={RouterLink} to="/about">
+                contact us
+              </Link>{" "}
+              to get set up on an Enterprise plan.
+            </Text>
+          </Text>
+        </Center>
         {content}
       </Box>
     </Box>
