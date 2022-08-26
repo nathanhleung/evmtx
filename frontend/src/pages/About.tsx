@@ -13,6 +13,9 @@ export default function About() {
         </Link>
         's <Code>anvil</Code> as a backend.
       </Text>
+      <Heading size="md" mb={2} mt={8}>
+        Architecture
+      </Heading>
       <Image src="/architecture.png" mt={8} width={["100%", "50%"]} />
     </Box>
   );

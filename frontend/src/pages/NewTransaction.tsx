@@ -21,7 +21,7 @@ export default function NewTransaction() {
   const [importTransactionError, setImportTransactionError] = useState("");
 
   const [transactionData, setTransactionData] = useState("0x");
-  const [contractAddr, setContractAddr] = useState("")
+  const [contractAddr, setContractAddr] = useState("");
   const [value, setValue] = useState("");
   const [toAddress, setToAddress] = useState(
     "0x0000000000000000000000000000000000000000"
@@ -107,7 +107,7 @@ export default function NewTransaction() {
   return (
     <Box className="Transaction py-2 rounded-lg" p={10} background="gray.100">
       <form onSubmit={handleSubmit}>
-        <VStack align="left" spacing={8}>
+        <VStack align="left" spacing={12}>
           <Box>
             <Heading size="md" mb={2}>
               Transaction Info
@@ -149,7 +149,7 @@ export default function NewTransaction() {
                   Try an Example
                 </Button>
               </HStack>
-              <Text color="red" mt={4}>
+              <Text color="red.500" mt={4}>
                 {importTransactionError}
               </Text>
             </Box>
@@ -193,8 +193,34 @@ export default function NewTransaction() {
                 type="number"
               />
             </FormControl>
+          </Box>
+          <Box>
+            <Heading size="md" mb={2}>
+              Build Transaction Data
+            </Heading>
+            <Text color="gray.500">
+              Manually input hex data, or construct a transaction with a
+              contract ABI
+            </Text>
             <FormControl mt={4}>
               <FormLabel>Transaction Hex Data</FormLabel>
+              <Box>
+                <FormControl mt={4}>
+                  <FormLabel>Input Contract Address</FormLabel>
+                  <Input
+                    background="white"
+                    color="black"
+                    value={contractAddr}
+                    onChange={(e) => setContractAddr(e.target.value)}
+                    type="string"
+                  />
+                </FormControl>
+                {contractAddr === "" ? (
+                  <div></div>
+                ) : (
+                  <ContractFuncs addr={contractAddr} />
+                )}
+              </Box>
               <Textarea
                 background="white"
                 color="black"
@@ -206,27 +232,12 @@ export default function NewTransaction() {
                 rows={10}
               />
             </FormControl>
-            <Box>
-              <FormControl mt={4}>
-                  <FormLabel>Input Contract Address</FormLabel>
-                  <Input
-                  background="white"
-                  color="black"
-                  value={contractAddr}
-                  onChange={(e) => setContractAddr(e.target.value)}
-                  type="string"
-                  />
-              </FormControl>
-              {
-                contractAddr === '' ? <div></div> : <ContractFuncs addr = {contractAddr} />
-              }
-            </Box>
           </Box>
         </VStack>
         <Button type="submit" disabled={loading} colorScheme="green" mt={4}>
           {loading ? "Tracing..." : "Trace"}
         </Button>
-        <Text color="red" mt={4}>
+        <Text color="red.500" mt={4}>
           {error}
         </Text>
       </form>

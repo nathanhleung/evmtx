@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   Button,
@@ -15,8 +15,10 @@ import { Trace as TraceType } from "../types";
 
 export default function TransactionDetail() {
   const { transactionId } = useParams();
+  const navigate = useNavigate();
   const [viewRaw, setViewRaw] = useState(false);
   const [trace, setTrace] = useState<TraceType>();
+  const [error, setError] = useState<string>();
 
   async function getTrace(transactionId: string) {
     try {
@@ -26,6 +28,7 @@ export default function TransactionDetail() {
       setTrace(JSON.parse(response.data.results));
     } catch (e) {
       console.error(e);
+      setError((e as any).toString());
     }
   }
 
@@ -34,6 +37,24 @@ export default function TransactionDetail() {
       getTrace(transactionId);
     }
   }, [transactionId]);
+
+  if (error) {
+    return (
+      <Center>
+        <Box textAlign="center">
+          <Heading fontSize="lg" mt={6}>
+            Error
+          </Heading>
+          <Text color="red.500" mt={2}>
+            {error}
+          </Text>
+          <Button colorScheme="blue" mt={8} onClick={() => navigate("/")}>
+            Back to Home
+          </Button>
+        </Box>
+      </Center>
+    );
+  }
 
   if (!trace) {
     return (

@@ -1,8 +1,8 @@
-import { FaGithub } from "react-icons/fa"
-import { Route, Link as RouterLink, Routes } from "react-router-dom"
-import { Box, Flex, Heading, Icon, Link, Text } from "@chakra-ui/react"
-import { ConnectionBadge } from "./components"
-import { About, Dashboard, NewTransaction, TransactionDetail } from "./pages"
+import { FaGithub, FaInfoCircle } from "react-icons/fa";
+import { Route, Link as RouterLink, Routes } from "react-router-dom";
+import { Box, Flex, HStack, Heading, Icon, Link, Text } from "@chakra-ui/react";
+import { ConnectionBadge } from "./components";
+import { About, Dashboard, NewTransaction, TransactionDetail } from "./pages";
 
 export default function App() {
   return (
@@ -15,9 +15,14 @@ export default function App() {
             </RouterLink>
             <ConnectionBadge marginLeft={4} />
           </Flex>
-          <Link href="https://github.com/nathanhleung/fip" target="_blank">
-            <Icon as={FaGithub} boxSize={8} />
-          </Link>
+          <HStack spacing={8}>
+            <Link as={RouterLink} to="/about">
+              <Icon as={FaInfoCircle} boxSize={8} />
+            </Link>
+            <Link href="https://github.com/nathanhleung/fip" target="_blank">
+              <Icon as={FaGithub} boxSize={8} />
+            </Link>
+          </HStack>
         </Flex>
         <Text color="gray.500">Trace Ethereum transactions using Foundry</Text>
 
@@ -34,5 +39,5 @@ export default function App() {
         </Box>
       </Box>
     </div>
-  )
+  );
 }
