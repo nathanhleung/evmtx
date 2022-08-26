@@ -4,6 +4,8 @@ import {
   Heading,
   Image,
   Link,
+  ListItem,
+  OrderedList,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -45,20 +47,41 @@ export default function About() {
           >
             Anvil
           </Link>{" "}
-          to maintain a local fork of the blockchain on our server (reflected in
-          the "Forked Web3" connection status). When you send a transaction to
-          our backend, we forward it to Anvil, which computes state changes on
-          as a result of the transaction our fork. Then, with the state changes
-          reflected in a{" "}
-          <Link
-            color="blue.500"
-            href="https://geth.ethereum.org/docs/rpc/ns-eth#3-object---state-override-set"
-          >
-            state override set
-          </Link>
-          , we call <Code>debug_traceCall</Code> on our full hosted node
-          (reflected in the "Full Web3 Connection Status") to get full traces.
+          to maintain a local fork of the blockchain on our server (connection
+          status reflected in the "Forked Web3" connection status). Anvil does
+          not support <Code>debug_traceCall</Code> (the nonstandard RPC method
+          we rely on to get traces), so we also run a full node which has that
+          RPC method enabled (connection status reflected in the "Full Web3
+          Connection Status"). When you send a transaction to our backend:
         </Text>
+        <OrderedList>
+          <ListItem>
+            First, we forward it to our full hosted node in a{" "}
+            <Code>debug_traceCall</Code> RPC call. This method returns a trace
+            which we display on the frontend. However, this does not actually
+            execute the transaction on-chain.
+          </ListItem>
+          <ListItem>
+            Second, we call Anvil's <Code>eth_sendUnsignedTransaction</Code>{" "}
+            with the same transaction data, so our blockchain fork reflects the
+            state of the blockchain as if the transaction was actually executed.
+          </ListItem>
+          <ListItem>
+            For subsequent transactions, we first dump our modified blockchain
+            state (from previously traced transactions) from our Anvil fork and
+            send that modified state to the full hosted node as a{" "}
+            <Link
+              color="blue.500"
+              href="https://geth.ethereum.org/docs/rpc/ns-eth#3-object---state-override-set"
+            >
+              state override set
+            </Link>
+            . Then, we call <Code>debug_traceCall</Code>. This allows users to
+            get traces of subsequent transactions as if their previous
+            transactions had actually run. This is not currently possible with{" "}
+            <Code>forge test</Code>, since those tests are stateless.
+          </ListItem>
+        </OrderedList>
         <Image src="/architecture.png" mt={8} width={["100%", "50%"]} />
       </Box>
     </VStack>
