@@ -5,7 +5,7 @@ type Trace = {
   functionArgs?: string[];
   functionName?: string;
   status: boolean;
-  subcalls: Trace[];
+  subcalls?: Trace[];
 };
 
 export type { Trace };

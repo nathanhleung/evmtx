@@ -105,7 +105,7 @@ export default function NewTransaction() {
   };
 
   return (
-    <Box className="Transaction py-2 rounded-lg" p={10} background="gray.100">
+    <Box className="Transaction" borderRadius="lg" p={16} background="gray.100">
       <form onSubmit={handleSubmit}>
         <VStack align="left" spacing={12}>
           <Box>

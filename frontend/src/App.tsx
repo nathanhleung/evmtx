@@ -1,6 +1,15 @@
-import { FaGithub, FaInfoCircle } from "react-icons/fa";
+import { FaGithub, FaHome, FaInfoCircle, FaPlusCircle } from "react-icons/fa";
 import { Route, Link as RouterLink, Routes } from "react-router-dom";
-import { Box, Flex, HStack, Heading, Icon, Link, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  HStack,
+  Heading,
+  Icon,
+  Link,
+  Text,
+  Tooltip,
+} from "@chakra-ui/react";
 import { ConnectionBadge } from "./components";
 import { About, Dashboard, NewTransaction, TransactionDetail } from "./pages";
 
@@ -16,12 +25,34 @@ export default function App() {
             <ConnectionBadge marginLeft={4} />
           </Flex>
           <HStack spacing={8}>
-            <Link as={RouterLink} to="/about">
-              <Icon as={FaInfoCircle} boxSize={8} />
-            </Link>
-            <Link href="https://github.com/nathanhleung/fip" target="_blank">
-              <Icon as={FaGithub} boxSize={8} />
-            </Link>
+            <Tooltip label="Home">
+              <Link as={RouterLink} to="/" _hover={{ opacity: 0.5 }}>
+                <Icon as={FaHome} boxSize={8} />
+              </Link>
+            </Tooltip>
+            <Tooltip label="New Trace">
+              <Link
+                as={RouterLink}
+                to="/transactions/new"
+                _hover={{ opacity: 0.5 }}
+              >
+                <Icon as={FaPlusCircle} boxSize={8} />
+              </Link>
+            </Tooltip>
+            <Tooltip label="About">
+              <Link as={RouterLink} to="/about" _hover={{ opacity: 0.5 }}>
+                <Icon as={FaInfoCircle} boxSize={8} />
+              </Link>
+            </Tooltip>
+            <Tooltip label="GitHub">
+              <Link
+                href="https://github.com/nathanhleung/fip"
+                target="_blank"
+                _hover={{ opacity: 0.5 }}
+              >
+                <Icon as={FaGithub} boxSize={8} />
+              </Link>
+            </Tooltip>
           </HStack>
         </Flex>
         <Text color="gray.500">Trace Ethereum transactions using Foundry</Text>
