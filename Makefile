@@ -23,3 +23,7 @@ anvil:
 all: frontend-build anvil
 	pip3 install -r requirements.txt && \
 		make cli
+
+production:
+	cd cli && python3 main.py --rpc-url http://localhost:8546 \
+		--etherscan-api-key $ETHERSCAN_API_KEY
