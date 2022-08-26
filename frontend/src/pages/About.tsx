@@ -18,7 +18,7 @@ export default function About() {
           About
         </Heading>
         <Text>
-          FIP is a project which allows you to trace Ethereum transactions,
+          EVMTX is a project which allows you to trace Ethereum transactions,
           using{" "}
           <Link href="https://github.com/foundry-rs/foundry/" color="blue.500">
             Foundry

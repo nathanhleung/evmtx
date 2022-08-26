@@ -20,7 +20,7 @@ export default function App() {
         <Flex justifyContent="space-between" alignItems="center" mb={2}>
           <Flex alignItems="center">
             <RouterLink to="/">
-              <Heading className="text-black">Foundry Web Tracer</Heading>
+              <Heading className="text-black">EVMTX</Heading>
             </RouterLink>
             <ConnectionBadge marginLeft={4} />
           </Flex>
@@ -46,7 +46,7 @@ export default function App() {
             </Tooltip>
             <Tooltip label="GitHub">
               <Link
-                href="https://github.com/nathanhleung/fip"
+                href="https://github.com/nathanhleung/evmtx"
                 target="_blank"
                 _hover={{ opacity: 0.5 }}
               >
