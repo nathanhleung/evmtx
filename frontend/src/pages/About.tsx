@@ -28,11 +28,15 @@ export default function About() {
       </Box>
       <Box>
         <Heading size="lg" mb={2}>
-          Contact
+          Enterprise
         </Heading>
         <Text>
           Contact us to get set up on an Enterprise plan and get access to an
-          isolated instance.
+          isolated instance. Alternatively, follow the instructions on{" "}
+          <Link href="https://github.com/nathanhleung/evmtx" color="blue.500">
+            our GitHub repository
+          </Link>{" "}
+          to self-host an isolated instance.
         </Text>
       </Box>
       <Box>
