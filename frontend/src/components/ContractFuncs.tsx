@@ -1,25 +1,22 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { isGeneratorFunction } from "util/types";
 import {
   Box,
-  Button,
+  BoxProps,
   FormControl,
   FormLabel,
-  HStack,
-  Heading,
   Input,
   Select,
-  Text,
-  Textarea,
-  VStack,
 } from "@chakra-ui/react";
 
-export type ContractFuncProps = {
+export type ContractFuncProps = BoxProps & {
   addr: string;
 };
 
-export default function ContractFuncts({ addr }: ContractFuncProps) {
+export default function ContractFuncts({
+  addr,
+  ...restProps
+}: ContractFuncProps) {
   const [abi, setAbi] = useState([]);
   const [functions, setFunctions] = useState([]);
   // make call to the get contract abi endpoint
@@ -42,9 +39,9 @@ export default function ContractFuncts({ addr }: ContractFuncProps) {
   }, [abi]);
 
   return (
-    <Box>
+    <Box {...restProps}>
       <FormControl>
-        <FormLabel>Select Function</FormLabel>
+        <FormLabel>Select Contract Function</FormLabel>
         <Select background="white">
           {functions.map((f: any) => (
             <option value={f.name}>{f.name}</option>

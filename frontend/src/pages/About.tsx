@@ -82,6 +82,24 @@ export default function About() {
             <Code>forge test</Code>, since those tests are stateless.
           </ListItem>
         </OrderedList>
+        <Heading size="md" mb={2} mt={4}>
+          Function Signatures
+        </Heading>
+        <Text mb={2}>
+          Since we only have raw calldata, we determine function signatures by
+          querying an API,{" "}
+          <Link href="https://www.4byte.directory/" color="blue.500">
+            4byte.directory
+          </Link>
+          , which indexes function selectors and can return the corresponding
+          function signature. In the case of collisions, we choose the first
+          signautre seen (so function signatures are not necessarily completely
+          accurate).
+        </Text>
+        <Heading size="md" mb={2} mt={4}>
+          Diagram
+        </Heading>
+        <Text mb={2}>Created in FigJam.</Text>
         <Image src="/architecture.png" mt={8} width={["100%", "50%"]} />
       </Box>
     </VStack>

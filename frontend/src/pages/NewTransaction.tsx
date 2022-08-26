@@ -9,6 +9,8 @@ import {
   HStack,
   Heading,
   Input,
+  InputGroup,
+  InputRightElement,
   Text,
   Textarea,
   VStack,
@@ -199,22 +201,35 @@ export default function NewTransaction() {
               Build Transaction Data
             </Heading>
             <Text color="gray.500">
-              Manually input hex data, or construct a transaction with a
-              contract ABI
+              Manually input hex data, or construct a transaction from a
+              contract address
             </Text>
             <Box>
               <FormControl mt={4}>
                 <FormLabel>Contract Address</FormLabel>
-                <Input
-                  background="white"
-                  color="black"
-                  value={contractAddr}
-                  onChange={(e) => setContractAddr(e.target.value)}
-                  type="string"
-                  placeholder="0x"
-                />
+                <InputGroup>
+                  <Input
+                    background="white"
+                    color="black"
+                    value={contractAddr}
+                    onChange={(e) => setContractAddr(e.target.value)}
+                    type="string"
+                    placeholder="0x"
+                  />
+                  <InputRightElement width="10rem">
+                    <Button
+                      size="sm"
+                      h="1.75rem"
+                      disabled={contractAddr === ""}
+                    >
+                      Import ABI
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
               </FormControl>
-              {contractAddr !== "" && <ContractFuncs addr={contractAddr} />}
+              {contractAddr !== "" && (
+                <ContractFuncs mt={4} addr={contractAddr} />
+              )}
             </Box>
             <FormControl mt={4}>
               <FormLabel>Transaction Hex Data</FormLabel>
