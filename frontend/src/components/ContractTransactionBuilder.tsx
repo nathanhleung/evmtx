@@ -1,8 +1,7 @@
-import { encode } from "punycode";
 import axios from "axios";
 import { ethers } from "ethers";
 import { AbiCoder } from "ethers/lib/utils";
-import { get, padStart, set } from "lodash";
+import { get, set } from "lodash";
 import { useState } from "react";
 import {
   Box,
