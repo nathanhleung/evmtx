@@ -202,25 +202,22 @@ export default function NewTransaction() {
               Manually input hex data, or construct a transaction with a
               contract ABI
             </Text>
+            <Box>
+              <FormControl mt={4}>
+                <FormLabel>Contract Address</FormLabel>
+                <Input
+                  background="white"
+                  color="black"
+                  value={contractAddr}
+                  onChange={(e) => setContractAddr(e.target.value)}
+                  type="string"
+                  placeholder="0x"
+                />
+              </FormControl>
+              {contractAddr !== "" && <ContractFuncs addr={contractAddr} />}
+            </Box>
             <FormControl mt={4}>
               <FormLabel>Transaction Hex Data</FormLabel>
-              <Box>
-                <FormControl mt={4}>
-                  <FormLabel>Input Contract Address</FormLabel>
-                  <Input
-                    background="white"
-                    color="black"
-                    value={contractAddr}
-                    onChange={(e) => setContractAddr(e.target.value)}
-                    type="string"
-                  />
-                </FormControl>
-                {contractAddr === "" ? (
-                  <div></div>
-                ) : (
-                  <ContractFuncs addr={contractAddr} />
-                )}
-              </Box>
               <Textarea
                 background="white"
                 color="black"
