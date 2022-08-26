@@ -1,21 +1,23 @@
 import sys
 from flask import Flask, jsonify, redirect, request, Response, abort
 from flask_cors import CORS
-
+from hexbytes import HexBytes
 from web3 import Web3
 import web3
-import web3.auto.gethdev as GethDev
 import requests
 import os
-from util import tx_formatter
+from util import tx_formatter, decode_function_data
 from web3._utils.method_formatters import to_hex_if_integer
 import json
+import solcx
+
 app = Flask(__name__)
 CORS(app)
 
 anvil_rpc_url = os.environ['ANVIL_RPC_URL']
 block_number = os.environ["BLOCK_NUMBER"]
 debug_rpc_url = os.environ['DEBUG_RPC_URL']
+os.environ['ETHERSCAN_API_KEY'] = "EJ3GF1MIGIS615UFJCPKBEIWNGY8W5CQTI"
 etherscan_api_key = os.environ['ETHERSCAN_API_KEY']
 frontend_url = os.environ['FRONTEND_URL']
 
@@ -57,6 +59,7 @@ counter = 0
 
 tx_data = {}
 trace_result = {}
+tx_hash = {}
 
 
 @app.route("/")
@@ -106,12 +109,10 @@ def sendTransaction():
         print(e)
         # 400 because this should only fail if the input is bad
         return repr(e), 400
-
     try:
-        hexbytes = local_w3.manager.request_blocking(
-            "eth_sendUnsignedTransaction", [calldata])
-
         traceResults = sendDump(calldata, int(os.getenv("BLOCK_NUMBER")))
+        hash = local_w3.manager.request_blocking(
+            "eth_sendUnsignedTransaction", [calldata])
     except Exception as e:
         print(e)
         # 500 because this probably indicates a problem with Anvil
@@ -119,9 +120,9 @@ def sendTransaction():
 
     trace_result[counter] = traceResults
     tx_data[counter] = calldata
-
+    tx_hash[counter] = hash
     response = jsonify({
-        "return": hexbytes,
+        "txHash": hash,
         "traceResults": Web3.toJSON(traceResults),
         "txData": Web3.toJSON(tx_data),
         "txIndex": counter
@@ -131,16 +132,40 @@ def sendTransaction():
     return response
 
 
+def trace_format(trace, identation_level=0):
+    result = {
+        "from": trace["from"],
+        "to": trace["to"],
+        "identation": identation_level,
+        "status": False if "error" in trace else False
+    }
+    try:
+        decoded_calldata = decode_function_data(HexBytes(trace["input"]))
+        result["functionName"] = decoded_calldata[0]
+        result["functionArgs"] = decoded_calldata[1]
+        result["functionArgs"] = [str(arg) for arg in result["functionArgs"]]
+        result["calldata"] = trace["input"]
+    except ValueError:
+        result["calldata"] = trace["input"]
+    if "calls" in trace:
+        result["subcalls"] = []
+        for subtrace in trace["calls"]:
+            result["subcalls"].append(
+                trace_format(subtrace, identation_level + 1))
+    return result
+
+
 @app.route("/transactions/<transaction_id>", methods=["GET"])
 # Gets the trace of the given transaction
 def getTransaction(transaction_id):
     txId = int(transaction_id)
-    trace = trace_result[txId]
-    result = []
-    result.append(
-        {"from": trace["from"], "to": trace["to"], "indentation": 0})
-    response = jsonify({"traces": result, "transactionData": tx_data[txId]})
+    if txId not in trace_result:
+        return abort(404)
 
+    trace = trace_result[txId]
+    formatted_traces = trace_format(trace)
+    response = jsonify({"results": Web3.toJSON(formatted_traces)})
+    print(formatted_traces)
     return response
 
 
@@ -160,9 +185,6 @@ def sendDump(txData, block):
     for addr, state in dump.items():
         state["nonce"] = to_hex_if_integer(state["nonce"])
         dump[addr] = state
-    # tracer = ""
-    # with open('/Users/haowang/coding/fip/server/tracer.txt') as f:
-    #     tracer = f.readlines()
     trace_result = debug_w3.manager.request_blocking(
         "debug_traceCall",
         [txData, to_hex_if_integer(block), {
@@ -172,16 +194,51 @@ def sendDump(txData, block):
     return trace_result
 
 
-@app.route("/get-trace", methods=['POST'])
-def getTrace():
-    return trace_result
-
-
 @app.route("/contracts/<contract_address>", methods=['GET'])
 def getContractAbi(contract_address):
     r = requests.get(url='https://api.etherscan.io/api' +
                      '?module=contract&action=getabi' +
                      '&address=' + contract_address +
                      '&apikey=' + etherscan_api_key)
-    print(r)
-    return "hello"
+    return Response(
+        json.loads(r.text)["result"],
+        mimetype="application/json",
+        status=r.status_code
+    )
+
+
+@app.route("/deployContracts", methods=["POST"])
+def deploy_contract():
+    source_code = request.form["source_code"]
+    compiler_version = request.form["compiler_version"]
+    contract_name = request.form["contract_name"]
+    deploy_bytescode = compile_contract(source_code, compiler_version,contract_name)
+    calldata = tx_formatter({
+            "from": local_w3.toChecksumAddress(request.form["from"]),
+            "data": deploy_bytescode,
+            "gasPrice": int(float(request.form["gasPrice"]) * 10e9) or gas_price * 10e9
+        })
+    local_w3.manager.request_blocking(
+            "eth_sendUnsignedTransaction", [calldata])
+
+
+def compile_contract(source_code: str, compiler_version: str, contract_name: str) -> HexBytes:
+    # compile contracts return the deploy bytecode
+    compiler_input = {
+        # Required: Source code language. Currently supported are "Solidity" and "Yul".
+        "language": "Solidity",
+        # Required
+        "sources": {
+            "File.sol":
+            {
+                # Required (unless "urls" is used): literal contents of the source file
+                "content": source_code
+            }
+        }
+    }
+
+    compiler_output = solcx.compile_standard(compiler_input,solc_version=compiler_version)
+    parsedOutput = json.parse(compiler_output)
+    deploy_bytecode = parsedOutput["contracts"][contract_name]["bytecode"]["object"]
+    return deploy_bytecode
+
