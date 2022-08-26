@@ -13,6 +13,7 @@ import {
   Textarea,
   VStack,
 } from "@chakra-ui/react";
+import ContractFuncs from "../components/ContractFuncs";
 
 export default function NewTransaction() {
   const [transactionHash, setTransactionHash] = useState("");
@@ -20,6 +21,7 @@ export default function NewTransaction() {
   const [importTransactionError, setImportTransactionError] = useState("");
 
   const [transactionData, setTransactionData] = useState("0x");
+  const [contractAddr, setContractAddr] = useState("")
   const [value, setValue] = useState("");
   const [toAddress, setToAddress] = useState(
     "0x0000000000000000000000000000000000000000"
@@ -204,6 +206,21 @@ export default function NewTransaction() {
                 rows={10}
               />
             </FormControl>
+            <Box>
+              <FormControl mt={4}>
+                  <FormLabel>Input Contract Address</FormLabel>
+                  <Input
+                  background="white"
+                  color="black"
+                  value={contractAddr}
+                  onChange={(e) => setContractAddr(e.target.value)}
+                  type="string"
+                  />
+              </FormControl>
+              {
+                contractAddr === '' ? <div></div> : <ContractFuncs addr = {contractAddr} />
+              }
+            </Box>
           </Box>
         </VStack>
         <Button type="submit" disabled={loading} colorScheme="green" mt={4}>
