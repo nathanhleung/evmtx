@@ -33,7 +33,7 @@ export default function Transaction({
   )
   return (
     <div
-      className="Transaction bg-zinc-200 text-black font-semibold py-2 rounded-lg"
+      className="Transaction bg-zinc-200 text-black font-semibold py-2"
       style={{ paddingLeft: 20 }}
     >
       <p className="py-2"> Status: {status} </p>
