@@ -8,6 +8,7 @@ import {
   Input,
   Select,
 } from "@chakra-ui/react";
+import { SERVER_URL } from "../config";
 
 export type ContractFuncProps = BoxProps & {
   addr: string;
@@ -22,9 +23,7 @@ export default function ContractFuncts({
   // make call to the get contract abi endpoint
   useEffect(() => {
     const interval = setInterval(async () => {
-      const result = await axios.get(
-        process.env.REACT_APP_SERVER_URL + "/contracts/" + addr
-      );
+      const result = await axios.get(SERVER_URL + "/contracts/" + addr);
       const data = result.data;
       console.log(data);
       setAbi(data);

@@ -13,6 +13,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { Trace } from "../components/";
+import { SERVER_URL } from "../config";
 import { Trace as TraceType } from "../types";
 
 const EXAMPLE_TRACE: TraceType = {
@@ -58,7 +59,7 @@ export default function TransactionDetail() {
   async function getTrace(transactionId: string) {
     try {
       const response = await axios.get(
-        process.env.REACT_APP_SERVER_URL + "/transactions/" + transactionId
+        SERVER_URL + "/transactions/" + transactionId
       );
       setTrace(JSON.parse(response.data.results));
     } catch (e) {

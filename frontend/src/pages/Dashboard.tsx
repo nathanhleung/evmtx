@@ -16,6 +16,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
+import { SERVER_URL } from "../config";
 
 type Transaction = {
   data: string;
@@ -30,9 +31,7 @@ export default function Dashboard() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   async function getTransactions() {
-    const response = await axios.get(
-      process.env.REACT_APP_SERVER_URL + "/transactions"
-    );
+    const response = await axios.get(SERVER_URL + "/transactions");
     const transactions = Object.values(response.data);
     setTransactions(transactions as Transaction[]);
   }

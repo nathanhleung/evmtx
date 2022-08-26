@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Badge, BadgeProps } from "@chakra-ui/react";
+import { SERVER_URL } from "../config";
 
 type ConnectionBadgeProps = Omit<BadgeProps, "colorScheme">;
 
@@ -14,9 +15,7 @@ export default function ConnectionBadge(props: ConnectionBadgeProps) {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const result = await axios.get(
-        process.env.REACT_APP_SERVER_URL + "/connection/local"
-      );
+      const result = await axios.get(SERVER_URL + "/connection/local");
       const data = result.data;
       setLocalConnection(data || data === "true");
     }, 1000);
@@ -25,9 +24,7 @@ export default function ConnectionBadge(props: ConnectionBadgeProps) {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const result = await axios.get(
-        process.env.REACT_APP_SERVER_URL + "/connection/remote"
-      );
+      const result = await axios.get(SERVER_URL + "/connection/remote");
       const data = result.data;
       setRemoteConnection(data || data === "true");
     }, 1000);

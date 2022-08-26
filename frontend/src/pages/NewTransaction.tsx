@@ -16,6 +16,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import ContractFuncs from "../components/ContractFuncs";
+import { SERVER_URL } from "../config";
 
 export default function NewTransaction() {
   const [transactionHash, setTransactionHash] = useState("");
@@ -38,9 +39,7 @@ export default function NewTransaction() {
   const navigate = useNavigate();
 
   async function getGasPrice() {
-    const response = await axios.get(
-      process.env.REACT_APP_SERVER_URL + "/gas-price"
-    );
+    const response = await axios.get(SERVER_URL + "/gas-price");
     setGasPrice(response.data.gasPrice);
   }
 
@@ -54,7 +53,7 @@ export default function NewTransaction() {
       setImportTransactionError("");
 
       const result = await axios.get(
-        process.env.REACT_APP_SERVER_URL +
+        SERVER_URL +
           "/raw-transactions/" +
           (optionalTransactionHash ?? transactionHash)
       );
@@ -91,10 +90,7 @@ export default function NewTransaction() {
     data.append("gasPrice", gasPrice);
     data.append("gasLimit", gasLimit);
     try {
-      const result = await axios.post(
-        process.env.REACT_APP_SERVER_URL + "/transactions/new",
-        data
-      );
+      const result = await axios.post(SERVER_URL + "/transactions/new", data);
       console.log(result.data);
       console.log(JSON.stringify(result.data));
       navigate(`/transactions/${result.data.txIndex}`);
