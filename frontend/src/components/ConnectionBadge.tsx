@@ -25,7 +25,7 @@ export default function ConnectionBadge(props: ConnectionBadgeProps) {
         console.log(e);
         setLocalConnection(false);
       }
-    }, 1000);
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -41,7 +41,7 @@ export default function ConnectionBadge(props: ConnectionBadgeProps) {
         console.log(e);
         setRemoteConnection(false);
       }
-    }, 1000);
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
