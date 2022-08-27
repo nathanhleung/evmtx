@@ -10,7 +10,7 @@ frontend-build:
 		npm run build
 
 server:
-	cd server && python3 -m flask run --port 9000
+	cd server && python3 -m flask run --host 0.0.0.0 --port 9000
 
 cli:
 	cd cli && python3 main.py --rpc-url http://142.132.152.124:8546 \
