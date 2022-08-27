@@ -67,4 +67,3 @@ Werkzeug==2.2.2
 wrapt==1.12.1
 yarl==1.8.1
 zipp==3.8.1
-py-solc-x

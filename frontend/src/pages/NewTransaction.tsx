@@ -14,6 +14,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { ContractTransactionBuilder } from "../components";
+import Compile  from "../components/Compile";
 import { SERVER_URL } from "../config";
 
 export default function NewTransaction() {
@@ -226,6 +227,7 @@ export default function NewTransaction() {
         <Text color="red.500" mt={4}>
           {error}
         </Text>
+        <Compile />
       </form>
     </Box>
   );
