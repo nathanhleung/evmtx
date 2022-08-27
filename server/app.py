@@ -235,7 +235,7 @@ def deploy_contract():
     })
     deploy_hash = local_w3.manager.request_blocking(
         "eth_sendUnsignedTransaction", [calldata])
-    time.sleep(15)
+    time.sleep(5)
     receipt = local_w3.manager.request_blocking("eth_getTransactionReceipt", [deploy_hash])
     for (bytecode, abi) in contracts:
         if request.form["deployBytecode"].startswith(bytecode):
