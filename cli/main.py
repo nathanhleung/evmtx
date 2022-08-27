@@ -20,17 +20,17 @@ signal.signal(signal.SIGINT, handle_ctrl_c)
 parser = argparse.ArgumentParser(description='FIP')
 
 parser.add_argument(
-    '--frontend-port',
-    metavar='frontend_port',
-    type=str,
-    help='the port to run the frontend on'
-)
-
-parser.add_argument(
     '--backend-port',
     metavar='backend_port',
     type=str,
     help='the port to run the backend on'
+)
+
+parser.add_argument(
+    '--frontend-url',
+    metavar='frontend_url',
+    type=str,
+    help='the url the frontend is accessible at'
 )
 
 parser.add_argument(
@@ -58,23 +58,24 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-frontend_port = args.frontend_port or 3000
 backend_port = args.backend_port or 9000
 block_number = args.block_number or 6500000
+frontend_url = args.frontend_url or 'https://evmtx.xyz'
 rpc_url = args.rpc_url
 etherscan_api_key = args.etherscan_api_key
+anvil_port = 8544
 
-print("Running frontend on port " + str(frontend_port))
+
 print("Running backend on port " + str(backend_port))
 print("Forking chain from block " + str(block_number))
 print("Using RPC at " + rpc_url)
 
 
 environment = os.environ.copy()
-environment["ANVIL_RPC_URL"] = "http://localhost:8545"
+environment["ANVIL_RPC_URL"] = "http://localhost:" + str(anvil_port)
 environment["BLOCK_NUMBER"] = str(block_number)
 environment["DEBUG_RPC_URL"] = rpc_url
-environment["FRONTEND_URL"] = "http://localhost:" + str(frontend_port)
+environment["FRONTEND_URL"] = frontend_url
 environment["ETHERSCAN_API_KEY"] = etherscan_api_key
 environment["PORT"] = str(backend_port)
 
@@ -84,19 +85,13 @@ processes = [
         "../server/app.py"
     ], env=environment),
     Popen([
-        sys.executable,
-        "-m",
-        "http.server",
-        "--directory",
-        "../frontend/build",
-        str(frontend_port),
-    ]),
-    Popen([
         os.getcwd() + "/../foundry/target/debug/anvil",  # hardcode this for now
         "--fork-url",
         rpc_url,
         "--fork-block-number",
-        str(block_number)
+        str(block_number),
+        "--port",
+        str(anvil_port)
     ])
 ]
 

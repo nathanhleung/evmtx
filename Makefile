@@ -10,10 +10,10 @@ frontend-build:
 		npm run build
 
 server:
-	cd server && python3 -m flask run -b 0.0.0.0:9000
+	cd server && python3 app.py
 
 cli:
-	cd cli && python3 main.py --rpc-url http://142.132.152.124:8546 \
+	cd cli && python3 main.py --rpc-url http://node.evmtx.xyz:8546 \
 		--etherscan-api-key $ETHERSCAN_API_KEY
 
 anvil:

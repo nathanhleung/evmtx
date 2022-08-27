@@ -13,10 +13,13 @@ import os
 from util import tx_formatter, decode_function_data
 from web3._utils.method_formatters import to_hex_if_integer
 import json
-import time 
+import time
+
 app = Flask(__name__)
 CORS(app)
 
+# These environment values are passed in from `Popen` in
+# `cli/main.py`; set them there.
 anvil_rpc_url = os.environ['ANVIL_RPC_URL']
 block_number = os.environ["BLOCK_NUMBER"]
 debug_rpc_url = os.environ['DEBUG_RPC_URL']
@@ -61,7 +64,6 @@ gas_price = int(debug_w3.eth.get_block(block_number)["baseFeePerGas"])
 
 counter = 0
 
-last_debug_connected = -1
 tx_data = {}
 trace_result = {}
 tx_hash = {}
@@ -76,21 +78,21 @@ def index():
 
 @app.route("/connection/local")
 def local_connection():
-    response = jsonify({"result": "false"})
-    if local_w3.isConnected():
+    try:
+        local_w3.eth.get_block('latest')
         response = jsonify({"result": "true"})
+    except:
+        response = jsonify({"result": "false"})
     return response
 
 
 @app.route("/connection/remote")
 def remote_connection():
-    global last_debug_connected
-    response = jsonify({"result": "false"})
-    if time.time() - last_debug_connected < 10:
-        return jsonify({"reuslt": "true"})
-    if debug_w3.isConnected():
-        last_debug_connected = time.time()
+    try:
+        local_w3.eth.get_block('latest')
         response = jsonify({"result": "true"})
+    except:
+        response = jsonify({"result": "false"})
     return response
 
 
@@ -296,11 +298,12 @@ def compile_contract_helper(source_code: str, compiler_version: str, contract_na
         for abi in abis:
             if abi["type"] == "constructor":
                 return (deploy_bytecode, abi["inputs"])
-        #return (deploy_bytecode, abis)
+        # return (deploy_bytecode, abis)
 
         return (deploy_bytecode, [])
     except (ValueError, SolcError):
         raise ValueError("Could not compile the source code")
 
 
+print("Serving web app at http://0.0.0.0:" + str(port))
 serve(app, host='0.0.0.0', port=port)
