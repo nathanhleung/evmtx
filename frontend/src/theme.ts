@@ -6,6 +6,7 @@ const theme = extendTheme({
     body: "Manrope, sans-serif",
   },
   fontWeights: {
+    medium: 700,
     bold: 800,
   },
 });

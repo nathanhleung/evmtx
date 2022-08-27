@@ -15,21 +15,35 @@ export default function ConnectionBadge(props: ConnectionBadgeProps) {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const result = await axios.get(SERVER_URL + "/connection/local");
-      const data = result.data;
-      setLocalConnection(data || data === "true");
+      try {
+        const result = await axios.get(SERVER_URL + "/connection/local");
+        const data = result.data;
+        setLocalConnection(
+          data && (data.result === true || data.result === "true")
+        );
+      } catch (e) {
+        console.log(e);
+        setLocalConnection(false);
+      }
     }, 1000);
     return () => clearInterval(interval);
-  }, [localConnection]);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const result = await axios.get(SERVER_URL + "/connection/remote");
-      const data = result.data;
-      setRemoteConnection(data || data === "true");
+      try {
+        const result = await axios.get(SERVER_URL + "/connection/remote");
+        const data = result.data;
+        setRemoteConnection(
+          data && (data.result === true || data.result === "true")
+        );
+      } catch (e) {
+        console.log(e);
+        setRemoteConnection(false);
+      }
     }, 1000);
     return () => clearInterval(interval);
-  }, [remoteConnection]);
+  }, []);
 
   return (
     <>
@@ -44,8 +58,8 @@ export default function ConnectionBadge(props: ConnectionBadgeProps) {
       </Tooltip>
       <Tooltip label="Full Blockchain Debug Node Connection Status">
         <Link to="/about">
-          <Badge colorScheme={localConnection ? "green" : "red"} {...props}>
-            {localConnection
+          <Badge colorScheme={remoteConnection ? "green" : "red"} {...props}>
+            {remoteConnection
               ? "Connected to Full Web3"
               : "Not Connected to Full Web3"}
           </Badge>

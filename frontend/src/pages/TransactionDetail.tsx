@@ -116,6 +116,9 @@ export default function TransactionDetail() {
   return (
     <div>
       <Box mb={8}>
+        <Heading size="lg" mb={2}>
+          Transaction Trace
+        </Heading>
         {transactionId === "example" && (
           <Text mb={8} color="gray.600">
             This example transaction trace shows the calls that are involved in

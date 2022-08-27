@@ -101,12 +101,12 @@ export default function NewTransaction() {
   };
 
   return (
-    <Box className="Transaction" borderRadius="lg" p={16} background="gray.100">
+    <Box borderRadius="lg" p={16} background="gray.100">
       <form onSubmit={handleSubmit}>
         <VStack align="left" spacing={12}>
           <Box>
-            <Heading size="md" mb={2}>
-              Transaction Info
+            <Heading size="lg" mb={2}>
+              Trace New Transaction
             </Heading>
             <Text color="gray.600">
               Import data from an existing transaction, or manually fill your
@@ -114,7 +114,7 @@ export default function NewTransaction() {
             </Text>
             <Box mt={8}>
               <FormControl>
-                <FormLabel>Transaction Hash</FormLabel>
+                <FormLabel>Existing Transaction Hash</FormLabel>
                 <Input
                   type="string"
                   background="white"
