@@ -285,7 +285,10 @@ def compile_contract_helper(source_code: str, compiler_version: str, contract_na
         compiler_output = solcx.compile_standard(
             compiler_input, solc_version=compiler_version)
         if 'errors' in compiler_output:
-            raise ValueError("Could not compile the source code")
+            e = compiler_output["errors"]
+            for i in e:
+                if i['type'] == 'Error':
+                    raise ValueError("Could not compile the source code")
         deploy_bytecode = compiler_output["contracts"]["File.sol"][contract_name]["evm"]["bytecode"]["object"]
         abis = compiler_output["contracts"]["File.sol"][contract_name]["abi"]
         contracts.append((deploy_bytecode, abis))
