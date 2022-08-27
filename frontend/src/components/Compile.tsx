@@ -168,19 +168,27 @@ export default function Compile({}) {
             background="white"
           />
         </FormControl>
-        <Button
-          colorScheme="blue"
-          size="sm"
-          onClick={compileContract}
-          mt={4}
-          mb={4}
-        >
+        <Button colorScheme="blue" size="sm" onClick={compileContract} mt={4}>
           Compile
         </Button>
+        {compiled === false ? (
+          <div></div>
+        ) : (
+          <Text color="green" mb={4}>
+            Contract complied!
+          </Text>
+        )}
+
         <Box>
-          <Heading size="sm" mb={2}>
-            Constructor Arguments
-          </Heading>
+          {compiled === false ? (
+            <Heading color="gray.400" size="sm" mt={4} mb={2}>
+              Constructor Arguments
+            </Heading>
+          ) : (
+            <Heading size="sm" mt={4} mb={2}>
+              Constructor Arguments
+            </Heading>
+          )}
           {
             // return constructor inputs
             constructorInputs === [] ? (
@@ -213,15 +221,20 @@ export default function Compile({}) {
           size="sm"
           onClick={deployContract}
           mt={4}
+          mb={4}
           disabled={!compiled}
         >
           Deploy
         </Button>
-        {deployData === ({} as DeployData) ? (
+        {deployData.address === undefined ? (
           <div></div>
         ) : (
           <div>
-            <Text color="gray.600">{deployData.address}</Text>
+            <Heading size="sm">Contract Address</Heading>
+            <Text color="gray.600" mb={2}>
+              {deployData.address}
+            </Text>
+            <Heading size="sm">Hash</Heading>
             <Text color="gray.600">{deployData.hash}</Text>
           </div>
         )}
