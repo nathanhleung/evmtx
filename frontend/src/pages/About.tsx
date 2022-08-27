@@ -1,3 +1,4 @@
+import { Link as RouterLink } from "react-router-dom";
 import {
   Box,
   Code,
@@ -18,13 +19,17 @@ export default function About() {
           About
         </Heading>
         <Text>
-          EVMTX is a project which allows you to trace Ethereum transactions,
-          using{" "}
-          <Link href="https://github.com/foundry-rs/foundry/" color="blue.500">
-            Foundry
+          <Link as={RouterLink} color="blue.500" to="/">
+            EVMTX
+          </Link>{" "}
+          is a project which allows you to trace and debug Ethereum transactions
+          in your browser. This project was built at{" "}
+          <Link color="blue.500" href="https://hacklodge.org/">
+            Hack Lodge S22
           </Link>
-          's <Code>anvil</Code> as a backend.
+          .
         </Text>
+        <Image src="/screenshot.png" mt={8} width={["100%", "50%"]} />
       </Box>
       <Box>
         <Heading size="lg" mb={2}>
@@ -51,7 +56,11 @@ export default function About() {
           >
             Anvil
           </Link>{" "}
-          to maintain a local fork of the blockchain on our server (connection
+          (from{" "}
+          <Link href="https://github.com/foundry-rs/foundry/" color="blue.500">
+            Foundry
+          </Link>
+          ) to maintain a local fork of the blockchain on our server (connection
           status reflected in the "Forked Web3" connection status). Anvil does
           not support <Code>debug_traceCall</Code> (the nonstandard RPC method
           we rely on to get traces), so we also run a full node which has that
