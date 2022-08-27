@@ -227,7 +227,7 @@ def getContractAbi(contract_address):
 
 
 @app.route("/deployContracts", methods=["POST"])
-def deploy_contract():
+async def deploy_contract():
     calldata = tx_formatter({
         "from": local_w3.toChecksumAddress(request.form["from"]),
         "data": request.form["deployBytecode"],
@@ -235,14 +235,14 @@ def deploy_contract():
     })
     deploy_hash = local_w3.manager.request_blocking(
         "eth_sendUnsignedTransaction", [calldata])
-    receipt = local_w3.eth.get_transaction_receipt(deploy_hash)
+    time.sleep(15)
+    receipt = local_w3.manager.request_blocking("eth_getTransactionReceipt", [deploy_hash])
     for (bytecode, abi) in contracts:
         if request.form["deployBytecode"].startswith(bytecode):
             deployed_abi[receipt["contractAddress"]] = abi
     if int(receipt["status"]) != 1:
         return jsonify({"status": False})
     return jsonify({"status": True, "hash": deploy_hash, "contractAddress": receipt["contractAddress"]})
-
 
 @app.route("/compileContract", methods=["POST"])
 def compile_contract():
