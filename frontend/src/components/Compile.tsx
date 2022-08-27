@@ -14,7 +14,8 @@ import {
   InputRightElement,
   Select,
   Text,
-  Textarea
+  Textarea,
+  Spinner
 } from "@chakra-ui/react"
 import { SERVER_URL } from "../config"
 import ContractTransactionBuilder from "./ContractTransactionBuilder"
@@ -226,6 +227,17 @@ export default function Compile({}) {
         >
           Deploy
         </Button>
+        {loading === false ? (
+          <div></div>
+        ) : (
+          <Box textAlign="center">
+            {" "}
+            <Spinner />{" "}
+            <Text color="gray.600" mt={2}>
+              Deploying contract...
+            </Text>
+          </Box>
+        )}
         {deployData.address === undefined ? (
           <div></div>
         ) : (
