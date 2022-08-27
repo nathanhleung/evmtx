@@ -227,7 +227,7 @@ def getContractAbi(contract_address):
 
 
 @app.route("/deployContracts", methods=["POST"])
-async def deploy_contract():
+def deploy_contract():
     calldata = tx_formatter({
         "from": local_w3.toChecksumAddress(request.form["from"]),
         "data": request.form["deployBytecode"],
