@@ -12,7 +12,7 @@ import os
 from util import tx_formatter, decode_function_data
 from web3._utils.method_formatters import to_hex_if_integer
 import json
-
+import time 
 app = Flask(__name__)
 CORS(app)
 
@@ -22,6 +22,7 @@ debug_rpc_url = os.environ['DEBUG_RPC_URL']
 os.environ['ETHERSCAN_API_KEY'] = "EJ3GF1MIGIS615UFJCPKBEIWNGY8W5CQTI"
 etherscan_api_key = os.environ['ETHERSCAN_API_KEY']
 frontend_url = os.environ['FRONTEND_URL']
+
 
 if anvil_rpc_url is None:
     print("Please provide the ANVIL_RPC_URL environment variable!")
@@ -58,10 +59,12 @@ gas_price = int(debug_w3.eth.get_block(block_number)["baseFeePerGas"])
 
 counter = 0
 
-
+last_debug_connected = -1
 tx_data = {}
 trace_result = {}
 tx_hash = {}
+contracts = []
+deployed_abi = {}
 
 
 @app.route("/")
@@ -80,7 +83,10 @@ def local_connection():
 @app.route("/connection/remote")
 def remote_connection():
     response = jsonify({"result": "false"})
+    if time.time() - last_debug_connected < 10:
+        return jsonify({"reuslt": "true"})
     if debug_w3.isConnected():
+        last_debug_connected = time.time()
         response = jsonify({"result": "true"})
     return response
 
@@ -198,6 +204,12 @@ def sendDump(txData, block):
 
 @app.route("/contracts/<contract_address>", methods=['GET'])
 def getContractAbi(contract_address):
+    if contract_address in deployed_abi:
+        return Response(
+            deployed_abi[contract_address],
+            mimetype="application/json",
+            status=200
+        )
     r = requests.get(url='https://api.etherscan.io/api' +
                      '?module=contract&action=getabi' +
                      '&address=' + contract_address +
@@ -218,7 +230,13 @@ def deploy_contract():
     })
     deploy_hash = local_w3.manager.request_blocking(
         "eth_sendUnsignedTransaction", [calldata])
-    return jsonify({"status": True, "hash": deploy_hash})
+    receipt = local_w3.eth.get_transaction_receipt(deploy_hash)
+    for (bytecode, abi) in contracts:
+        if request.form["deployBytecode"].startswith(bytecode):
+            deployed_abi[receipt["contractAddress"]] = abi
+    if int(receipt["status"]) != 1:
+        return jsonify({"status": False})
+    return jsonify({"status": True, "hash": deploy_hash, "contractAddress": receipt["contractAddress"]})
 
 
 @app.route("/compileContract", methods=["POST"])
@@ -267,9 +285,11 @@ def compile_contract_helper(source_code: str, compiler_version: str, contract_na
             raise ValueError("Could not compile the source code")
         deploy_bytecode = compiler_output["contracts"]["File.sol"][contract_name]["evm"]["bytecode"]["object"]
         abis = compiler_output["contracts"]["File.sol"][contract_name]["abi"]
+        contracts.append((deploy_bytecode, abis))
         for abi in abis:
             if abi["type"] == "constructor":
                 return (deploy_bytecode, abi["inputs"])
+
         return (deploy_bytecode, [])
     except (ValueError, SolcError):
         raise ValueError("Could not compile the source code")
