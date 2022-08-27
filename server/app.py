@@ -291,10 +291,12 @@ def compile_contract_helper(source_code: str, compiler_version: str, contract_na
                     raise ValueError("Could not compile the source code")
         deploy_bytecode = compiler_output["contracts"]["File.sol"][contract_name]["evm"]["bytecode"]["object"]
         abis = compiler_output["contracts"]["File.sol"][contract_name]["abi"]
+        print(compiler_output["contracts"]["File.sol"][contract_name]["abi"])
         contracts.append((deploy_bytecode, abis))
         for abi in abis:
             if abi["type"] == "constructor":
                 return (deploy_bytecode, abi["inputs"])
+        #return (deploy_bytecode, abis)
 
         return (deploy_bytecode, [])
     except (ValueError, SolcError):
