@@ -220,7 +220,7 @@ export default function NewTransaction() {
             </FormControl>
           </Box>
         </VStack>
-        <Button type="submit" disabled={loading} colorScheme="green" mt={4}>
+        <Button type="submit" disabled={loading} colorScheme="blue" mt={4}>
           {loading ? "Tracing..." : "Trace"}
         </Button>
         <Text color="red.500" mt={4}>

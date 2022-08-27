@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   Button,
@@ -8,6 +8,7 @@ import {
   Code,
   HStack,
   Heading,
+  Link,
   Spinner,
   Text,
   useToast,
@@ -115,6 +116,15 @@ export default function TransactionDetail() {
   return (
     <div>
       <Box mb={8}>
+        {transactionId === "example" && (
+          <Text mb={8} color="gray.500">
+            This example transaction trace shows the calls that are involed in a
+            Uniswap swap.{" "}
+            <Link to="/transactions/new" as={RouterLink} color="blue.500">
+              Trace Your Own +
+            </Link>
+          </Text>
+        )}
         <Trace trace={trace} showTableHeaders />
       </Box>
       <HStack>
