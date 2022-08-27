@@ -17,6 +17,9 @@ import { ContractTransactionBuilder } from "../components";
 import Compile from "../components/Compile";
 import { SERVER_URL } from "../config";
 
+const EXAMPLE_TRANSACTION_HASH =
+  "0x0e31661d655d450143e59aaefe8b253ba5ab228d686a2dd2d214524d46019087";
+
 export default function NewTransaction() {
   const [transactionHash, setTransactionHash] = useState("");
   const [importing, setImporting] = useState(false);
@@ -134,12 +137,8 @@ export default function NewTransaction() {
                 </Button>
                 <Button
                   onClick={() => {
-                    setTransactionHash(
-                      "0x0e31661d655d450143e59aaefe8b253ba5ab228d686a2dd2d214524d46019087"
-                    );
-                    importTransaction(
-                      "0x0e31661d655d450143e59aaefe8b253ba5ab228d686a2dd2d214524d46019087"
-                    );
+                    setTransactionHash(EXAMPLE_TRANSACTION_HASH);
+                    importTransaction(EXAMPLE_TRANSACTION_HASH);
                   }}
                 >
                   Try an Example

@@ -1,6 +1,6 @@
 import axios from "axios";
-import { ethers } from "ethers";
-import { AbiCoder } from "ethers/lib/utils";
+import { BigNumber } from "ethers";
+import { FunctionFragment, Interface } from "ethers/lib/utils";
 import { get, set } from "lodash";
 import { useState } from "react";
 import {
@@ -50,7 +50,6 @@ export default function ContractTransactionBuilder({
       );
       if (Array.isArray(result.data)) {
         setAbi(result.data);
-        console.log(result.data);
       } else {
         setAbi([]);
         setSelectedContractFunctionIndex(0);
@@ -66,21 +65,11 @@ export default function ContractTransactionBuilder({
     }
   }
 
-  function getInputSignature(input: any) {
-    if (input.type === "tuple") {
-      return `(${input.components
-        .map((c: any) => {
-          return getInputSignature(c);
-        })
-        .join(",")})`;
-    }
-    return input.type;
-  }
-
-  function getInputFormControl(input: any, index: number[]) {
+  // `nestedIndexPath` handles struct parameters
+  function getInputFormControl(input: any, nestedIndexPath: number[]) {
     if (input.type === "tuple") {
       return input.components.map((component: any, i: number) => {
-        return getInputFormControl(component, [...index, i]);
+        return getInputFormControl(component, [...nestedIndexPath, i]);
       });
     }
 
@@ -92,12 +81,12 @@ export default function ContractTransactionBuilder({
           {input.type} {input.name}
         </FormLabel>
         <Input
-          value={get(contractFunctionParams, index, "").value}
+          value={get(contractFunctionParams, nestedIndexPath, "").value}
           onChange={(e) => {
             const value = e.target.value;
             const newContractFunctionParams = set(
               [...contractFunctionParams],
-              index,
+              nestedIndexPath,
               { type: input.type, value }
             );
             setContractFunctionParams(newContractFunctionParams);
@@ -114,34 +103,44 @@ export default function ContractTransactionBuilder({
     );
   }
 
+  // Convert JS types to types that the encoder accepts
+  // (e.g. number => bignumber)
+  function processFunctionParam(param: { value: string; type: string }): any {
+    if (Array.isArray(param)) {
+      return param.map(processFunctionParam);
+    }
+    if (param.type?.includes("int")) {
+      return BigNumber.from(param.value);
+    }
+    return param.value;
+  }
+
   function generateCalldata() {
     if (selectedContractFunctionIndex !== undefined) {
-      const selectedFunction = contractFunctions[selectedContractFunctionIndex];
-      const signature = `${selectedFunction.name}(${selectedFunction.inputs
-        .map((i: any) => getInputSignature(i))
-        .join(",")})`;
-      const functionSelector = ethers.utils
-        .keccak256(ethers.utils.toUtf8Bytes(signature))
-        .slice(0, 10);
+      const contractInterface = new Interface(abi);
 
-      const flattenedParameters = contractFunctionParams.flat();
-      const abiCoder = new AbiCoder();
+      const functionFragment = FunctionFragment.fromObject(
+        contractFunctions[selectedContractFunctionIndex]
+      );
+
       try {
         setEncodingError("");
-        const encodedParameters = abiCoder
-          .encode(
-            flattenedParameters.map((it) => it.type),
-            flattenedParameters.map((it) => it.value)
-          )
-          .slice(2);
 
-        setTransactionData(`${functionSelector}${encodedParameters}`);
-        setEncodingError(
-          "Generated calldata! However, this feature is still in beta. Please inspect the generated calldata before tracing."
+        const processedContractFunctionParams =
+          contractFunctionParams.map(processFunctionParam);
+
+        const calldata = contractInterface.encodeFunctionData(
+          functionFragment,
+          processedContractFunctionParams
         );
+        setTransactionData(calldata);
       } catch (e) {
         console.log(e);
-        setEncodingError((e as any).toString());
+        if ((e as any).reason === "types/values length mismatch") {
+          setEncodingError("Please fill in all fields.");
+        } else {
+          setEncodingError((e as any).toString());
+        }
       }
     }
   }
@@ -186,6 +185,7 @@ export default function ContractTransactionBuilder({
               onChange={(e) => {
                 setSelectedContractFunctionIndex(parseInt(e.target.value, 10));
                 setContractFunctionParams([]);
+                setEncodingError("");
               }}
             >
               {contractFunctions.map((f: any, i) => (
