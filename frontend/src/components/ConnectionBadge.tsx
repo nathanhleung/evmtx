@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Badge, BadgeProps } from "@chakra-ui/react";
+import { Badge, BadgeProps, Tooltip } from "@chakra-ui/react";
 import { SERVER_URL } from "../config";
 
 type ConnectionBadgeProps = Omit<BadgeProps, "colorScheme">;
@@ -33,20 +33,24 @@ export default function ConnectionBadge(props: ConnectionBadgeProps) {
 
   return (
     <>
-      <Link to="/about">
-        <Badge colorScheme={localConnection ? "green" : "red"} {...props}>
-          {localConnection
-            ? "Connected to Forked Web3"
-            : "Not Connected to Forked Web3"}
-        </Badge>
-      </Link>
-      <Link to="/about">
-        <Badge colorScheme={localConnection ? "green" : "red"} {...props}>
-          {localConnection
-            ? "Connected to Full Web3"
-            : "Not Connected to Full Web3"}
-        </Badge>
-      </Link>
+      <Tooltip label="Anvil Blockchain Fork Connection Status">
+        <Link to="/about">
+          <Badge colorScheme={localConnection ? "green" : "red"} {...props}>
+            {localConnection
+              ? "Connected to Forked Web3"
+              : "Not Connected to Forked Web3"}
+          </Badge>
+        </Link>
+      </Tooltip>
+      <Tooltip label="Full Blockchain Debug Node Connection Status">
+        <Link to="/about">
+          <Badge colorScheme={localConnection ? "green" : "red"} {...props}>
+            {localConnection
+              ? "Connected to Full Web3"
+              : "Not Connected to Full Web3"}
+          </Badge>
+        </Link>
+      </Tooltip>
     </>
   );
 }

@@ -4,8 +4,8 @@ import {
   Box,
   Flex,
   HStack,
-  Heading,
   Icon,
+  Image,
   Link,
   Text,
   Tooltip,
@@ -20,11 +20,11 @@ export default function App() {
         <Flex justifyContent="space-between" alignItems="center" mb={2}>
           <Flex alignItems="center">
             <RouterLink to="/">
-              <Heading className="text-black">EVMTX</Heading>
+              <Image src="/icon.png" boxSize="80px" />
             </RouterLink>
-            <ConnectionBadge marginLeft={4} />
           </Flex>
           <HStack spacing={8}>
+            <ConnectionBadge />
             <Tooltip label="Home">
               <Link as={RouterLink} to="/" _hover={{ opacity: 0.5 }}>
                 <Icon as={FaHome} boxSize={8} />
@@ -55,7 +55,6 @@ export default function App() {
             </Tooltip>
           </HStack>
         </Flex>
-        <Text color="gray.600">Trace Ethereum transactions using Foundry</Text>
 
         <Box paddingY={[10, 15, 20]}>
           <Routes>
