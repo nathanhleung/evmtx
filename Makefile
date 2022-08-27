@@ -10,7 +10,7 @@ frontend-build:
 		npm run build
 
 server:
-	cd server && python3 -m flask run --port 9000
+	cd server && python3 -m flask run -b 0.0.0.0:9000
 
 cli:
 	cd cli && python3 main.py --rpc-url http://142.132.152.124:8546 \
@@ -23,7 +23,3 @@ anvil:
 all: frontend-build anvil
 	pip3 install -r requirements.txt && \
 		make cli
-
-production:
-	cd cli && python3 main.py --rpc-url http://localhost:8546 \
-		--etherscan-api-key $ETHERSCAN_API_KEY

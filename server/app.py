@@ -4,6 +4,7 @@ import solcx
 import sys
 from flask import Flask, jsonify, redirect, request, Response, abort
 from flask_cors import CORS
+from waitress import serve
 from hexbytes import HexBytes
 from web3 import Web3
 import web3
@@ -22,6 +23,7 @@ debug_rpc_url = os.environ['DEBUG_RPC_URL']
 os.environ['ETHERSCAN_API_KEY'] = "EJ3GF1MIGIS615UFJCPKBEIWNGY8W5CQTI"
 etherscan_api_key = os.environ['ETHERSCAN_API_KEY']
 frontend_url = os.environ['FRONTEND_URL']
+port = os.environ['PORT'] or 9000
 
 if anvil_rpc_url is None:
     print("Please provide the ANVIL_RPC_URL environment variable!")
@@ -275,5 +277,4 @@ def compile_contract_helper(source_code: str, compiler_version: str, contract_na
         raise ValueError("Could not compile the source code")
 
 
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", debug=False)
+serve(app, host='0.0.0.0', port=port)
