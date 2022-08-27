@@ -105,7 +105,7 @@ export default function TransactionDetail() {
           <Heading fontSize="lg" mt={6}>
             Tracing...
           </Heading>
-          <Text color="gray.500" mt={2}>
+          <Text color="gray.600" mt={2}>
             Getting transaction trace...
           </Text>
         </Box>
@@ -117,9 +117,9 @@ export default function TransactionDetail() {
     <div>
       <Box mb={8}>
         {transactionId === "example" && (
-          <Text mb={8} color="gray.500">
-            This example transaction trace shows the calls that are involed in a
-            Uniswap swap.{" "}
+          <Text mb={8} color="gray.600">
+            This example transaction trace shows the calls that are involved in
+            a Uniswap swap.{" "}
             <Link to="/transactions/new" as={RouterLink} color="blue.500">
               Trace Your Own +
             </Link>

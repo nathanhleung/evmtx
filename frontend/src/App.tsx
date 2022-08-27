@@ -55,7 +55,7 @@ export default function App() {
             </Tooltip>
           </HStack>
         </Flex>
-        <Text color="gray.500">Trace Ethereum transactions using Foundry</Text>
+        <Text color="gray.600">Trace Ethereum transactions using Foundry</Text>
 
         <Box paddingY={[10, 15, 20]}>
           <Routes>

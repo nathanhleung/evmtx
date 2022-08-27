@@ -47,11 +47,11 @@ export default function Dashboard() {
         <Heading size="md" mb={2}>
           No Transactions Yet
         </Heading>
-        <Text color="gray.500">
+        <Text color="gray.600">
           After creating a trace, view your traced transactions here
         </Text>
         <Box mt={10}>
-          <Link as={RouterLink} color="gray.500" to="/transactions/new">
+          <Link as={RouterLink} color="blue.500" to="/transactions/new">
             Trace New Transaction +
           </Link>
         </Box>
@@ -79,7 +79,7 @@ export default function Dashboard() {
           <Tbody>{transactionComponents}</Tbody>
         </Table>
         <Box mt={10} textAlign="center">
-          <Link as={RouterLink} color="gray.500" to="/transactions/new">
+          <Link as={RouterLink} color="gray.600" to="/transactions/new">
             Trace New Transaction +
           </Link>
         </Box>
@@ -91,7 +91,7 @@ export default function Dashboard() {
     <Box>
       <Center flexDirection="column">
         <Heading size="lg">Debug Ethereum Transactions in Your Browser</Heading>
-        <Text color="gray.500" mt={2}>
+        <Text color="gray.600" mt={2}>
           Input arbitrary transaction parameters and get a trace back
         </Text>
         <HStack mt={8}>
@@ -111,7 +111,7 @@ export default function Dashboard() {
           <Heading size="lg" mb={4}>
             All Traced Transactions
           </Heading>
-          <Text color="gray.500" width={["100%", "80%", "60%"]}>
+          <Text color="gray.600" width={["100%", "80%", "60%"]}>
             <Text>
               Free users share a single common blockchain fork, hosted node, and
               traced transaction list. Blockchain state is reset to the latest

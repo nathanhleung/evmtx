@@ -14,7 +14,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { ContractTransactionBuilder } from "../components";
-import Compile  from "../components/Compile";
+import Compile from "../components/Compile";
 import { SERVER_URL } from "../config";
 
 export default function NewTransaction() {
@@ -108,7 +108,7 @@ export default function NewTransaction() {
             <Heading size="md" mb={2}>
               Transaction Info
             </Heading>
-            <Text color="gray.500">
+            <Text color="gray.600">
               Import data from an existing transaction, or manually fill your
               own transaction data.
             </Text>
@@ -154,7 +154,7 @@ export default function NewTransaction() {
             <Heading size="md" mb={2}>
               Raw Transaction Fields
             </Heading>
-            <Text color="gray.500">Manually edit transaction data.</Text>
+            <Text color="gray.600">Manually edit transaction data.</Text>
             <HStack spacing={4} mt={4}>
               <FormControl className="py-2">
                 <FormLabel>From Address</FormLabel>
@@ -194,7 +194,7 @@ export default function NewTransaction() {
             <Heading size="md" mb={2}>
               Build Transaction Data
             </Heading>
-            <Text color="gray.500">
+            <Text color="gray.600">
               Manually input hex data, or construct a transaction from a
               contract address
             </Text>
@@ -206,7 +206,7 @@ export default function NewTransaction() {
             <Heading size="sm" mb={2}>
               Transaction Hex Data
             </Heading>
-            <Text color="gray.500">Manually input, or generate above.</Text>
+            <Text color="gray.600">Manually input, or generate above.</Text>
             <FormControl mt={4}>
               <Textarea
                 background="white"

@@ -50,7 +50,7 @@ export default function ContractTransactionBuilder({
       );
       if (Array.isArray(result.data)) {
         setAbi(result.data);
-        console.log(result.data)
+        console.log(result.data);
       } else {
         setAbi([]);
         setSelectedContractFunctionIndex(0);
@@ -88,7 +88,7 @@ export default function ContractTransactionBuilder({
 
     return (
       <FormControl mt={4} key={input.name}>
-        <FormLabel color="gray.500">
+        <FormLabel color="gray.600">
           {input.type} {input.name}
         </FormLabel>
         <Input
