@@ -76,16 +76,12 @@ environment["BLOCK_NUMBER"] = str(block_number)
 environment["DEBUG_RPC_URL"] = rpc_url
 environment["FRONTEND_URL"] = "http://localhost:" + str(frontend_port)
 environment["ETHERSCAN_API_KEY"] = etherscan_api_key
+environment["PORT"] = str(backend_port)
 
 processes = [
     Popen([
         sys.executable,
-        "-m",
-        "flask",
-        "--app",
-        "../server/app",
-        "run",
-        "--port=" + str(backend_port),
+        "../server/app.py"
     ], env=environment),
     Popen([
         sys.executable,
