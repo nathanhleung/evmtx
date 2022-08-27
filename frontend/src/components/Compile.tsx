@@ -73,7 +73,7 @@ export default function Compile({
         setError("");
         setLoading(true);
         const data = new FormData();
-        data.append("deploy_bytecode", bytecode)
+        data.append("deployBytecode", bytecode)
         data.append("from", from)
         data.append("gasPrice", gasPrice)
         try {
