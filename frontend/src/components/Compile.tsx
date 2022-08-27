@@ -32,6 +32,9 @@ export default function Compile({
     const [bytecode, setBytecode] = useState("")
     const [abi, setAbi] = useState([]);
     const [constructorInputs, setConstructorInputs] = useState([])
+    const [contractFunctionParams, setContractFunctionParams] = useState<any[]>(
+        []
+      );
 
     async function compileContract() {
         setError("");
@@ -49,7 +52,7 @@ export default function Compile({
                 setCompiled(true)
                 setAbi(result.data.abi)
                 setBytecode(result.data.bytecode)
-                const constructor = result.data.filter(function (e: any) { e.type === "constructor"})
+                const constructor = result.data.filter(function (e: any) { e.type === "constructor" })
                 if (constructor !== []) {
                     setConstructorInputs(constructor[0].inputs)
                 }
@@ -85,9 +88,48 @@ export default function Compile({
         }
     }
 
+    // we have something that maps to this
+
+    function constructorFormControl(input:any, index: number[])
+    {
+        // if the constructor arg is a struct
+        if (input.type === "tuple") {
+            return input.components.map((component: any, i: number) => {
+              return constructorFormControl(component, [...index, i]);
+            });
+          }
+          const isArrayType = input.type.includes("[");
+        return (
+        // return constructor inputs
+        <FormControl mt={4} key={input.name}>
+            <FormLabel color="gray.500">
+            {input.type} {input.name}
+            </FormLabel>
+            <Input value={compiler} 
+                onChange={(e) => {
+                    value={get(contractFunctionParams, index, "").value}
+                    const newContractFunctionParams = set(
+                      [...contractFunctionParams],
+                      index,
+                      { type: input.type, value }
+                    );
+                    setContractFunctionParams(newContractFunctionParams);
+                  }}
+                  placeholder={
+                    isArrayType
+                      ? "Unsupported Parameter Type"
+                      : `${input.type} ${input.name}`
+                  }
+                  background="white"
+                  disabled={isArrayType} />  
+        </FormControl>  
+        )
+    }
+
 
     return (
         <Box>
+            <div>
             <Heading size="sm" mb={2}>
                 Contract Code
             </Heading>
@@ -113,13 +155,15 @@ export default function Compile({
             >
                 Compile
             </Button>
+            <Box>
             {
                 // return constructor inputs
                 constructorInputs === [] ? <div></div> :
-                constructorInputs.map((input) => {
-                // <Input value={compiler} onChange={(e) => setCompiler(e.target.value)} placeholder={input} background="white" />    
-                })
+                    constructorInputs.map((input: any, index: number) => 
+                        {return constructorFormControl(input, [index]) }  
+                    )
             }
+            </Box>
             <Button
                 colorScheme="blue"
                 size="sm"
@@ -129,6 +173,7 @@ export default function Compile({
             >
                 Deploy
             </Button>
+            </div>
         </Box>
     );
 }
