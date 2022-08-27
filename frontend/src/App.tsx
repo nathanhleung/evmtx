@@ -16,6 +16,7 @@ import { About, Dashboard, NewTransaction, TransactionDetail } from "./pages";
 export default function App() {
   return (
     <div className="text-black bg-[#FFFFFF] min-h-screen">
+      <Box width="100%" height={4} background="blue.500" />
       <Box maxWidth={["100%", "80%"]} margin="0 auto" paddingY={[10, 15, 20]}>
         <Flex justifyContent="space-between" alignItems="center" mb={2}>
           <Flex alignItems="center">
