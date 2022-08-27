@@ -273,3 +273,7 @@ def compile_contract_helper(source_code: str, compiler_version: str, contract_na
         return (deploy_bytecode, [])
     except (ValueError, SolcError):
         raise ValueError("Could not compile the source code")
+
+
+if __name__ == '__main__':
+    app.run(host="0.0.0.0")
