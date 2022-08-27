@@ -136,7 +136,7 @@ export default function Compile({
                 </Heading>
                 <Text color="gray.500">Manually input your contract code to compile and deploy.</Text>
                 <FormControl mt={4}>
-                    <Input value={contractName} onChange={(e) => setContractName(e.target.value)} placeholder="Contract Name" background="white" />
+                    <Input value={contractName} onChange={(e) => setContractName(e.target.value)} placeholder="Contract Name" background="white" mb={4}/>
                     <Textarea
                         background="white"
                         color="black"
@@ -146,6 +146,7 @@ export default function Compile({
                         onChange={(e) => setContract(e.target.value)}
                         style={{ width: "100%" }}
                         rows={10}
+                        mb={4}
                     />
                     <Input value={compiler} onChange={(e) => setCompiler(e.target.value)} placeholder="Compiler Version" background="white" />
                 </FormControl>
@@ -154,6 +155,7 @@ export default function Compile({
                     size="sm"
                     onClick={compileContract}
                     mt={4}
+                    mb={4}
                 >
                     Compile
                 </Button>
@@ -166,7 +168,7 @@ export default function Compile({
                     }
                 </Box>
                 <Box>
-                    <Input value={from} onChange={(e) => setFrom(e.target.value)} placeholder="From Address" background="white" />
+                    <Input value={from} onChange={(e) => setFrom(e.target.value)} placeholder="From Address" background="white" mb={4}/>
                     <Input value={gasPrice} onChange={(e) => setGasPrice(e.target.value)} placeholder="Gas Price" background="white" />
                 </Box>
                 <Button
